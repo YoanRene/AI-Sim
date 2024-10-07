@@ -1,6 +1,6 @@
 # 🚌 Movilidad en La Habana
 
-Este proyecto desarrolla un simulador de movilidad urbana para La Habana. El sistema modela los patrones de movimiento de los residentes a lo largo de un día típico, con un enfoque principal en la red de transporte público de ómnibus.
+Este proyecto desarrolla un simulador de movilidad urbana para La Habana. El sistema modela los patrones de movimiento de los residentes a lo largo de un día laboral, con un enfoque principal en la red de transporte público de ómnibus.
 
 ## 🎯 Objetivo Principal
 
