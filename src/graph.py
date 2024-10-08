@@ -89,10 +89,10 @@ def cargar_datos(grafo):
                 codigo_parada1, _ = paradas_de_la_ruta[i]
                 codigo_parada2, _ = paradas_de_la_ruta[i + 1]
                 parada1 = next((p for p in grafo.vertices.values() if p.codigo == codigo_parada1), None)
-                ruta.append(parada1)
+                ruta.append((parada1,id))
                 parada2 = next((p for p in grafo.vertices.values() if p.codigo == codigo_parada2), None)
                 if(i==len(paradas_de_la_ruta)-2):
-                    ruta.append(parada2)
+                    ruta.append((parada2,id))
                 if parada1 and parada2:
                     grafo.agregar_arista(parada1, parada2, id)
             grafo.rutas.append(ruta)

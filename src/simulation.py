@@ -13,7 +13,8 @@ class Evento:
         return self.time <= other.time
 
 class Guagua:
-    def __init__(self, ruta):
+    def __init__(self,id, ruta):
+        self.id=id
         self.ruta = ruta
         self.position = 0
         self.pasajeros = []
@@ -25,7 +26,10 @@ def simulacion(grafo, num_agentes, tiempo_max):
     eventos = []
     current_time = 0
 
+    print(f"Starting simulation with {num_agentes} agents for {tiempo_max} seconds")
+
     # Inicialización
+    heapq.heappush(eventos, Evento("person_arrival", current_time-2,Agente(-1,grafo.get_parada('3108'),grafo.get_parada('3456'))))
     for i in range(num_agentes):
         origen = get_random_parada(grafo)
         destino = get_random_parada(grafo)
@@ -45,9 +49,10 @@ def simulacion(grafo, num_agentes, tiempo_max):
 
         if evento.event_name == "person_arrival":
             agente = evento.args
-            agente.elegir_ruta(grafo)  # Pasar información de guaguas
+            agente.elegir_ruta(grafo)
             if(len(agente.intenciones)<2):
                 continue
+            print(f"Agente {agente.id} llegó a la parada {agente.creencias['parada_actual']}")
             proxima_guagua = agente.intenciones[1][1]  # Asumiendo que intenciones[1] es (parada, guagua)
             
             if proxima_guagua not in agente.creencias["parada_actual"].colas:
@@ -58,23 +63,39 @@ def simulacion(grafo, num_agentes, tiempo_max):
             ruta = evento.args
             if(len(ruta)<1):
                 continue
-            guagua = Guagua(ruta)
+            guagua = Guagua(ruta[0][1],ruta)
             evento_siguiente = Evento("next_stop", current_time, guagua)
             heapq.heappush(eventos, evento_siguiente)
 
         elif evento.event_name == "next_stop":
             guagua = evento.args
-            parada_actual = guagua.ruta[guagua.position]
+            parada_actual = guagua.ruta[guagua.position][0]
             if(not parada_actual):
                 continue
         
             # Bajar pasajeros
-            guagua.pasajeros = [p for p in guagua.pasajeros if p.creencias["destino"] != parada_actual]
+            pasajeros_antes = len(guagua.pasajeros)
+            for pasajero in guagua.pasajeros:
+                if pasajero.creencias["parada_next"] == parada_actual:
+                    if pasajero.creencias["destino"] != parada_actual:
+                        pasajero.creencias["parada_actual"] = parada_actual
+                        evento_person_arrival = Evento("person_arrival", current_time-0.01, pasajero)
+                        heapq.heappush(eventos, evento_person_arrival)
+                    else:
+                        print(f"Agente {pasajero.id} llegó a su destino en {parada_actual.nombre}")
+            guagua.pasajeros = [p for p in guagua.pasajeros if p.creencias["parada_next"] != parada_actual]
+            pasajeros_bajados = pasajeros_antes - len(guagua.pasajeros)
+            if(pasajeros_bajados>0):
+                print(f"Pasajeros bajados en {parada_actual.nombre}: {pasajeros_bajados}")
+            
         
             # Subir pasajeros
-            while guagua.has_capacity() and (guagua in parada_actual.colas) and len(parada_actual.colas[guagua])>0:
-                pasajero = parada_actual.colas[guagua].pop(0)
+            pasajeros_subidos = 0
+            while guagua.has_capacity() and (guagua.id in parada_actual.colas) and len(parada_actual.colas[guagua.id])>0:
+                pasajero = parada_actual.colas[guagua.id].pop(0)
                 guagua.pasajeros.append(pasajero)
+                pasajeros_subidos += 1
+            
         
             guagua.position += 1
             if guagua.position < len(guagua.ruta):
@@ -93,4 +114,4 @@ def simulacion(grafo, num_agentes, tiempo_max):
 if __name__ == '__main__':
     grafo=Grafo()
     cargar_datos(grafo)
-    simulacion(grafo, num_agentes=20, tiempo_max=1800)  # Simular 30 minutos con 50 agentes    simulacion(grafo, num_agentes=100, tiempo_max=3600)  # Simular 1 hora con 100 agentes
+    simulacion(grafo, num_agentes=20, tiempo_max=18000)  # Simular 30 minutos con 50 agentes    simulacion(grafo, num_agentes=100, tiempo_max=3600)  # Simular 1 hora con 100 agentes
