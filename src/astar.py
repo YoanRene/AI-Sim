@@ -77,6 +77,7 @@ def a_star(grafo, origen, destino, estrategia="distancia"):
       # Puedes añadir lógica para elegir una guagua específica de la lista
       nuevo_coste = coste_actual + 1  # Considera el coste de tomar la guagua
       for guagua in guaguas:
+        #TODO: Falta verificar que si es a pie darle un mayor peso en dependencia de la persona.
         coste_estimado = nuevo_coste + heuristica(grafo.vertices[parada_vecina], destino, estrategia, grafo, ruta_actual, guagua)
         heappush(cola_prioridad, (coste_estimado, grafo.vertices[parada_vecina], ruta_actual + [(grafo.vertices[parada_vecina],guagua)]))
 

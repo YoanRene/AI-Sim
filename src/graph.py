@@ -132,12 +132,5 @@ if __name__ == '__main__':
     for i,j in ruta:
         print(f"{j}:{i}")
     print(len(ruta),len(set(id for _,id in ruta[1:])),distancia_ruta([x for x,_ in ruta]))
-    ruta = a_star(grafo, grafo.vertices["3108"], grafo.vertices["3456"],estrategia='menos_paradas')
-    for i,j in ruta:
-        print(f"{j}:{i}")
-    print(len(ruta),len(set(a for _,a in ruta[1:])),distancia_ruta([x for x,_ in ruta]))
-
-    ruta = a_star(grafo, grafo.vertices["3108"], grafo.vertices["3456"],estrategia='ruta_fija')
-    for i,j in ruta:
-        print(f"{j}:{i}")
-    print(len(ruta),len(set(a for _,a in ruta[1:])),distancia_ruta([x for x,_ in ruta]))
+    for ruta in grafo.rutas:
+        print(ruta)

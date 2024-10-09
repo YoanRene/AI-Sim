@@ -62,10 +62,10 @@ class Agente:
         if estrategia == "distancia":
             puntuacion += self.preferencias["rapidez"] * (1 / len(ruta))  # Mayor puntuación para rutas más cortas
         elif estrategia == "menos_paradas":
-            try:
+            if len(ruta)==1:
+                puntuacion += self.preferencias["comodidad"]
+            else:
                 puntuacion += self.preferencias["comodidad"] * (1 / len(set(parada.id for parada, _ in ruta[1:])))  # Menos transbordos
-            except:
-                print (set(parada.id for parada, _ in ruta[1:]))
         elif estrategia == "ruta_fija":
             # Aquí se podría evaluar la comodidad en función de la información de las guaguas
             pass 
