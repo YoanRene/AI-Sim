@@ -50,7 +50,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
     for ruta in grafo.rutas:
         evento = Evento("init_bus", current_time, ruta)
         heapq.heappush(eventos, evento)
-
+    agente_en_destino = 0
     # Bucle principal de simulación
     while eventos and current_time < tiempo_max:
         # print(current_time)
@@ -63,11 +63,25 @@ def simulacion(grafo, num_agentes, tiempo_max):
             """
             agente = evento.args
             agente.elegir_ruta(grafo)
+            if agente.creencias["parada_actual"] == agente.creencias["destino"]:
+                print(f"Agente {agente.id} llegó su destino en {agente.creencias['parada_actual']}")
+                agente_en_destino +=1
+                continue
             if(len(agente.intenciones)<2):
                 continue
-            print(f"Agente {agente.id} llegó a la parada {agente.creencias['parada_actual']}")
+            print(f"Agente {agente.id} llegó{' a pie' if agente.intenciones[1][1] == 'pie' else ''} a la parada {agente.creencias['parada_actual']}")
             proxima_guagua = agente.intenciones[1][1]  # Asumiendo que intenciones[1] es (parada, guagua)
-            
+
+            if proxima_guagua == "pie":
+                # Cuando tiene que ir para la proxima parada a pie
+                #Actualizamos sus creencias
+                agente.creencias["parada_actual"] = agente.intenciones[1][0]
+                #Creamos el evento de llegada a la proxima parada
+                evento_person_arrival = Evento("person_arrival", current_time+10, agente)
+                #Lo agregamos al heap
+                heapq.heappush(eventos, evento_person_arrival)
+                continue
+
             if proxima_guagua not in agente.creencias["parada_actual"].colas:
                 agente.creencias["parada_actual"].colas[proxima_guagua]=[]
             agente.creencias["parada_actual"].colas[proxima_guagua].append(agente)
@@ -102,6 +116,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
                         evento_person_arrival = Evento("person_arrival", current_time-0.01, pasajero)
                         heapq.heappush(eventos, evento_person_arrival)
                     else:
+                        agente_en_destino +=1
                         print(f"Agente {pasajero.id} llegó a su destino en {parada_actual.nombre}")
                         pass
             guagua.pasajeros = [p for p in guagua.pasajeros if p.creencias["parada_next"] != parada_actual]
@@ -129,7 +144,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
                 evento_reinicio = Evento("init_bus", current_time, guagua.ruta)
                 heapq.heappush(eventos, evento_reinicio)
 
-    print("Simulación completada")
+    print("Simulación completada, agente en destino:", agente_en_destino)
 
 # Uso en la simulación
 if __name__ == '__main__':

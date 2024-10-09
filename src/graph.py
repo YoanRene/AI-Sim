@@ -1,5 +1,6 @@
 import csv
 from astar import a_star,distancia_euclidea
+from haversine import haversine
 class Parada:
     def __init__(self, id, nombre, codigo, direccion, x, y, county):
         self.id = id
@@ -97,6 +98,16 @@ def cargar_datos(grafo):
                 if parada1 and parada2:
                     grafo.agregar_arista(parada1, parada2, id)
             grafo.rutas.append(ruta)
+        
+        #Agregar paradas cercanas para ir a pie
+        for parada in grafo.vertices.values():
+            for parada2 in grafo.vertices.values():
+                if parada == parada2:
+                    continue
+                dist = haversine((parada.y,parada.x), (parada2.y,parada2.x))
+                if dist > 0.5:
+                    continue
+                grafo.agregar_arista(parada, parada2, 'pie')
 
 def distancia_ruta(ruta):
   """
