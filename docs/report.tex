@@ -32,12 +32,12 @@
 % Abstract en inglés
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
-
+This project proposal for the Artificial Intelligence and Simulation courses aims to develop a mobility trajectory generator for Havana. The generator will simulate the movement of the city's inhabitants, focusing primarily on the bus networks. The primary goal is to estimate the number of residents present in each municipality of the capital over the course of a 24-hour day.
 \end{abstract}
 % Abstract
 \renewcommand{\abstractname}{Resumen}
 \begin{abstract}
-
+Esta propuesta de proyecto para las asignaturas de Inteligencia Artificial y Simulación tiene como objetivo desarrollar un generador de trayectorias de movilidad para La Habana. El generador simulará el movimiento de los habitantes de la capital, considerando principalmente las redes de ómnibus. El objetivo principal es estimar la cantidad de habitantes que se encuentran en cada municipio de la capital durante las 24 horas de un día.
 \end{abstract}
 
 
@@ -46,9 +46,38 @@
 
 % Sección de Introducción
 \section{Introducción}
+Los estudios sobre la movilidad humana se enfocan en describir cómo las personas se desplazan dentro de un sistema o red. El análisis y la predicción de estos movimientos tienen aplicaciones en diversas áreas, como la propagación de enfermedades, la planificación urbana, la ingeniería del tráfico y los mercados financieros, entre otras. En el caso de enfermedades infecciosas como la COVID-19, se sabe que la movilidad humana es un factor clave para su propagación.
+
+Actualmente, se recopila una enorme cantidad de datos sobre trayectorias de movilidad a través de sensores y diversas aplicaciones. Sin embargo, su uso directo presenta desafíos debido a preocupaciones sobre la privacidad, consideraciones comerciales, datos faltantes y altos costos de implementación. Por este motivo, la generación de datos sintéticos de trayectorias de movilidad ha surgido como una tendencia emergente para mitigar las dificultades asociadas al uso de datos reales. La investigación en la generación de trayectorias sintéticas está ganando gran atención, como lo demuestra el creciente número de publicaciones en este campo interdisciplinario.
+
+Atendiendo a lo anterior se propone entonces la creaci\'on de un modelo capaz de simular el movimiento de los habitantes de la La Habana considerando principalmente las redes de \'omnibus de la capital. 
 
 % Sección de Metodología
 \section{Metodología}
+La metodología adoptada en este proyecto se fundamenta en la modelación de la red de transporte público de La Habana como un \textbf{multigrafo} \( G = (V, E) \), donde los \textbf{vértices} \( V \) representan las paradas de transporte público y las \textbf{aristas} \( E \subseteq V \times V \) corresponden a las conexiones entre estas paradas a lo largo de rutas determinadas. En este contexto, cada vértice \( v \in V \) corresponde a una parada física del transporte público, mientras que cada arista \( e_{ij} \in E \) conecta dos vértices \( v_i \) y \( v_j \), permitiendo modelar las múltiples opciones de conexión entre dichas paradas a través de diferentes rutas.
+
+Las aristas \( e_{ij} \) pueden ser etiquetadas con rutas de transporte público específicas, \( r_k \), de tal manera que \( e_{ij}^{(r_k)} \) indica que la arista conecta \( v_i \) y \( v_j \) a través de la ruta \( r_k \). Estas rutas solo incluyen los sistemas de autobuses principales (e.g., P12) capturando así las diversas alternativas de transporte entre dos paradas específicas.
+
+Los \textbf{agentes}, que representan a las personas, son modelados bajo la arquitectura \textbf{BDI} (Belief-Desire-Intention). Formalmente, cada agente \( a \in A \), donde \( A \) es el conjunto de todos los agentes, está caracterizado por un conjunto de \textbf{creencias} \( B_a \), que representan su conocimiento del entorno, un conjunto de \textbf{deseos} \( D_a \), que incluye sus objetivos o metas, y un conjunto de \textbf{intenciones} \( I_a \), que definen las acciones que el agente toma para cumplir con sus deseos.
+
+Cada agente \( a \) tiene preferencias \( P_a \), que influyen en su decisión de selección de rutas y medios de transporte. Estas preferencias se modelan como una función de utilidad \( u_a : E \times P_a \rightarrow \mathbb{R} \), donde el agente elige la ruta que maximiza su utilidad. La función de utilidad puede depender de varios factores, tales como:
+
+\[
+u_a(e_{ij}^{(r_k)}) = f(T_{ij}, C_{ij}, \Delta t, p_a)
+\]
+
+donde \( T_{ij} \) es el tiempo de viaje entre \( v_i \) y \( v_j \), \( C_{ij} \) es el costo del transporte, \( \Delta t \) representa la disponibilidad de las rutas en función de los horarios, y \( p_a \) son las preferencias personales del agente.
+
+El objetivo del modelo es estimar la cantidad de personas presentes en cada municipio de La Habana a lo largo de un periodo de 24 horas. Para esto, se realiza un análisis dinámico de la red de transporte, observando el flujo de agentes entre los nodos del grafo. Sea \( N(v,t) \) la cantidad de personas en el nodo \( v \) en el tiempo \( t \), que es función del número de agentes que ingresan y salen del nodo a través de las aristas \( e_{ij} \).
+
+\[
+N(v, t+1) = N(v, t) + \sum_{i} \left( \text{entradas}_i(v, t) - \text{salidas}_i(v, t) \right)
+\]
+
+De esta manera, el comportamiento colectivo de los agentes a lo largo del día permitirá predecir la distribución de personas en los diferentes municipios de La Habana.
+
+Este enfoque, basado en una simulación multi-agente combinada con la modelación del multigrafo, proporciona una visión detallada y dinámica del comportamiento de movilidad urbana, lo que resulta esencial para cumplir con el objetivo de estimar la cantidad de habitantes en cada municipio en diferentes momentos del día.
+
 
 % Sección de Resultados
 \section{Resultados y Discusi\'on}
