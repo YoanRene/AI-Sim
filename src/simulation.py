@@ -5,6 +5,7 @@ from astar import a_star
 from utils import get_random_parada 
 import random
 import json
+import numpy as np
 
 class Evento:
     def __init__(self, event_name, time, args):
@@ -44,6 +45,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
     heapq.heappush(eventos, Evento("person_arrival", current_time-2,Agente(-1,grafo.get_parada('3108'),grafo.get_parada('917'))))
     
     distribucion = json.load(open('data/distribucion.json',encoding="utf-8"))
+    rutas_config = json.load(open('data/rutas_config.json',encoding="utf-8"))['rutas']
 
     for i in distribucion["house"]:
         print(f'Creando {distribucion["house"][i]} personas en {i}')
@@ -113,6 +115,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
             evento_siguiente = Evento("next_stop", current_time, guagua)
             heapq.heappush(eventos, evento_siguiente)
             #Iniciamos una nueva guagua en un tiempo aleatorio
+            # next_time = np.random.exponential(rutas_config[guagua.id])
             new_guagua = Evento('init_bus',current_time + random.randint(100,200),ruta)
             heapq.heappush(eventos,new_guagua)
         elif evento.event_name == "next_stop":

@@ -1,0 +1,100 @@
+{
+    "rutas": [
+      {
+        "id": "P1",
+        "nombre": "LA ROSITA - PLAYA",
+        "tiempo_promedio_salida": 10,
+        "max_guaguas": 5
+      },
+      {
+        "id": "P2",
+        "nombre": "ALBERRO - CVD JOSE MARTI, VEDADO",
+        "tiempo_promedio_salida": 15,
+        "max_guaguas": 3
+      },
+      {
+        "id": "P3",
+        "nombre": "ALAMAR - PUENTE DE HIERRO",
+        "tiempo_promedio_salida": 12,
+        "max_guaguas": 4
+      },
+      {
+        "id": "P4",
+        "nombre": "SAN AGUSTIN - TERMINAL FFCC",
+        "tiempo_promedio_salida": 8,
+        "max_guaguas": 6
+      },
+      {
+        "id": "P5",
+        "nombre": "SAN AGUSTIN - TERMINAL FFCC",
+        "tiempo_promedio_salida": 10,
+        "max_guaguas": 5
+      },
+      {
+        "id": "P6",
+        "nombre": "RPTO ELECTRICO - UNIVERSIDAD HABANA",
+        "tiempo_promedio_salida": 12,
+        "max_guaguas": 4
+      },
+      {
+        "id": "P7",
+        "nombre": "ALBERRO - PARQUE DE LA FRATERNIDAD",
+        "tiempo_promedio_salida": 15,
+        "max_guaguas": 3
+      },
+      {
+        "id": "P8",
+        "nombre": "RPTO ELECTRICO - VILLA PANAMERICANA",
+        "tiempo_promedio_salida": 10,
+        "max_guaguas": 5
+      },
+      {
+        "id": "P9",
+        "nombre": "STA AMALIA - CUJAE",
+        "tiempo_promedio_salida": 12,
+        "max_guaguas": 4
+      },
+      {
+        "id": "P10",
+        "nombre": "VIBORA - NAUTICO",
+        "tiempo_promedio_salida": 15,
+        "max_guaguas": 3
+      },
+      {
+        "id": "P11",
+        "nombre": "MICRO X - G Y 29, VEDADO",
+        "tiempo_promedio_salida": 10,
+        "max_guaguas": 5
+      },
+      {
+        "id": "P12",
+        "nombre": "SANTIAGO - PARQUE DE LA FRATERNIDAD",
+        "tiempo_promedio_salida": 12,
+        "max_guaguas": 4
+      },
+      {
+        "id": "P13",
+        "nombre": "SANTIAGO - PARQUE DE LA FRATERNIDAD",
+        "tiempo_promedio_salida": 15,
+        "max_guaguas": 3
+      },
+      {
+        "id": "P14",
+        "nombre": "SAN AGUSTIN - PARQUE DE LA FRATERNIDAD",
+        "tiempo_promedio_salida": 10,
+        "max_guaguas": 5
+      },
+      {
+        "id": "P15",
+        "nombre": "SANTA FE - G y 25",
+        "tiempo_promedio_salida": 12,
+        "max_guaguas": 4
+      },
+      {
+        "id": "P16",
+        "nombre": "SANTIAGO - HOSP AMEJEIRAS",
+        "tiempo_promedio_salida": 15,
+        "max_guaguas": 3
+      }
+    ]
+  }
