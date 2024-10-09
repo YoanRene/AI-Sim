@@ -40,8 +40,6 @@ class Agente:
                 if mejor_ruta[i][1]!=mejor_ruta[i+1][1]:
                     self.creencias["parada_next"] = mejor_ruta[i][0]
                     break
-            if self.creencias["parada_next"]== None:
-                print("Va caminando")
             # print(f"Agente {self.id} eligió ruta con estrategia: {mejor_estrategia}")
         else:
             print(f"Agente {self.id} no encontró una ruta viable.")
