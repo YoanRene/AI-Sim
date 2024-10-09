@@ -1,5 +1,6 @@
 import math
 from heapq import heappop, heappush
+from haversine import haversine
 
 def distancia_euclidea(parada1, parada2):
   """
@@ -78,5 +79,21 @@ def a_star(grafo, origen, destino, estrategia="distancia"):
       for guagua in guaguas:
         coste_estimado = nuevo_coste + heuristica(grafo.vertices[parada_vecina], destino, estrategia, grafo, ruta_actual, guagua)
         heappush(cola_prioridad, (coste_estimado, grafo.vertices[parada_vecina], ruta_actual + [(grafo.vertices[parada_vecina],guagua)]))
+    
+    #Arista de caminado
+    #Obtenemos todas las paradas que esten en un radio de 500 metros de la parada actual
+    for parada in grafo.vertices.values():
+      if parada == parada_actual:
+        continue
+      dist = haversine((parada_actual.y,parada_actual.x), (parada.y,parada.x))
+      # if parada.id == '917' and parada_actual.id == '3108':
+      #   print(f"Esta es la otra {dist}")
+      if dist > 0.5:
+        continue
+      # print(f'{dist}--{parada.id}')
+      coste_estimado  = nuevo_coste + heuristica(grafo.vertices[parada.id], destino, estrategia, grafo, ruta_actual)*2 #Este 2 se puede cambiar por el peso que le de cada agente a caminar
+      heappush(cola_prioridad, (coste_estimado, grafo.vertices[parada.id], ruta_actual + [(grafo.vertices[parada.id],"None")]))
 
+
+      
   return None  # No se encontró ruta

@@ -40,7 +40,9 @@ class Agente:
                 if mejor_ruta[i][1]!=mejor_ruta[i+1][1]:
                     self.creencias["parada_next"] = mejor_ruta[i][0]
                     break
-            print(f"Agente {self.id} eligió ruta con estrategia: {mejor_estrategia}")
+            if self.creencias["parada_next"]== None:
+                print("Va caminando")
+            # print(f"Agente {self.id} eligió ruta con estrategia: {mejor_estrategia}")
         else:
             print(f"Agente {self.id} no encontró una ruta viable.")
 
@@ -60,7 +62,10 @@ class Agente:
         if estrategia == "distancia":
             puntuacion += self.preferencias["rapidez"] * (1 / len(ruta))  # Mayor puntuación para rutas más cortas
         elif estrategia == "menos_paradas":
-            puntuacion += self.preferencias["comodidad"] * (1 / len(set(parada.id for parada, _ in ruta[1:])))  # Menos transbordos
+            try:
+                puntuacion += self.preferencias["comodidad"] * (1 / len(set(parada.id for parada, _ in ruta[1:])))  # Menos transbordos
+            except:
+                print (set(parada.id for parada, _ in ruta[1:]))
         elif estrategia == "ruta_fija":
             # Aquí se podría evaluar la comodidad en función de la información de las guaguas
             pass 

@@ -1,11 +1,12 @@
 import csv
 from astar import a_star,distancia_euclidea
 class Parada:
-    def __init__(self, id, nombre, codigo, direccion, x, y):
+    def __init__(self, id, nombre, codigo, direccion, x, y, county):
         self.id = id
         self.nombre = nombre
         self.codigo = codigo
         self.direccion = direccion
+        self.county = county
         self.colas = {}
         if x=='':
             self.x=0
@@ -60,8 +61,8 @@ def cargar_datos(grafo):
     with open('data/listaparadas.csv','r', encoding='utf-8') as f:
         reader = csv.reader(f)
         next(reader)  # Saltar la cabecera
-        for id, nombre, codigo, direccion, x, y in reader:
-            parada = Parada(id, nombre, codigo, direccion, x, y)
+        for id, nombre, codigo, direccion, x, y, county in reader:
+            parada = Parada(id, nombre, codigo, direccion, x, y, county)
             grafo.agregar_vertice(parada)
 
     # Diccionario para almacenar las paradas de cada ruta por ID de ruta
@@ -116,7 +117,7 @@ if __name__ == '__main__':
     cargar_datos(grafo)
     print(grafo.get_parada('3108'))
     # Encontrar la ruta usando la heurística de distancia
-    ruta = a_star(grafo, grafo.vertices["3108"], grafo.vertices["3456"],estrategia='distancia')
+    ruta = a_star(grafo, grafo.vertices["3108"], grafo.vertices["917"],estrategia='distancia')
     for i,j in ruta:
         print(f"{j}:{i}")
     print(len(ruta),len(set(id for _,id in ruta[1:])),distancia_ruta([x for x,_ in ruta]))
