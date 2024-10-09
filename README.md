@@ -10,8 +10,8 @@ Estimar la distribución poblacional en los diferentes municipios de La Habana d
 
 1. Clona este repositorio:
   ``` 
-   git clone https://github.com/tu-usuario/nombre-del-repo.git
-   cd nombre-del-repo
+   git clone https://github.com/YoanRene/AI-Sim.git
+   cd AI-Sim
 ```
 2. Instala las dependencias:
   ```
@@ -19,7 +19,7 @@ Estimar la distribución poblacional en los diferentes municipios de La Habana d
   ```
 3. Ejecuta el script:
   ```
-  python src/main.py
+  python src/simulation.py
   ```
 ## 📚 Documentación
-Para obtener más detalles sobre el proyecto y su implementación, consulta la documentación completa en [report](https://github.com/tu-usuario/nombre-del-repo/docs).
+Para obtener más detalles sobre el proyecto y su implementación, consulta la documentación completa en [report](https://github.com/YoanRene/AI-Sim/docs/report.pdf).
