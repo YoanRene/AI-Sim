@@ -5,14 +5,17 @@ from graph import Grafo,cargar_datos
 class Agente:
     def __init__(self, id, parada_actual, destino):
         self.id = id
-        self.creencias = {"parada_actual": parada_actual, "destino": destino,"parada_next":destino}
+        self.creencias = {"regresa":True,"parada_origen":parada_actual,"parada_actual": parada_actual, "destino": destino,"parada_next":destino}
         self.deseos = ["llegar_destino"]
         self.intenciones = []
         # Preferencias del agente (ajusta los valores según la importancia)
         self.preferencias = {
             "rapidez": 0.6,
             "comodidad": 0.3,
-            "costo": 0.1,
+            "ganancias": 0.1,
+            "laboriosidad":0.3,
+            "condicion_fisica":0.4,
+            "paciencia":0.4 
         }
 
     def elegir_ruta(self, grafo, informacion_guaguas=None):
