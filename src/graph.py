@@ -7,6 +7,7 @@ class Parada:
         self.codigo = codigo
         self.direccion = direccion
         self.colas = {}
+        self.poblacion=[]
         if x=='':
             self.x=0
             self.y=0
@@ -19,19 +20,6 @@ class Parada:
     def __str__(self):
         return f"Parada {self.nombre} ({self.codigo})"
 
-class Guagua:
-    def __init__(self, id, ruta, nombre, terminal, origen, destino):
-        self.id = id
-        self.ruta = ruta
-        self.nombre = nombre
-        self.terminal = terminal
-        self.origen = origen
-        self.destino = destino
-    def __lt__(self,otra):
-        return True
-    def __str__(self):
-        return f"({self.ruta})"
-        # return f"Guagua {self.nombre} ({self.ruta})"
 
 class Grafo:
     def __init__(self):
@@ -79,7 +67,6 @@ def cargar_datos(grafo):
         reader = csv.reader(f)
         next(reader)  # Saltar cabecera
         for id, ruta, nombre, terminal, origen, destino, *_ in reader:
-            guagua = Guagua(id, ruta, nombre, terminal, origen, destino)
 
             # Obtener las paradas de la ruta (asumiendo que están ordenadas)
             paradas_de_la_ruta = paradas_por_ruta.get(id, [])

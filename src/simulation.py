@@ -59,6 +59,26 @@ def simulacion(grafo, num_agentes, tiempo_max):
                 agente.creencias["parada_actual"].colas[proxima_guagua]=[]
             agente.creencias["parada_actual"].colas[proxima_guagua].append(agente)
         
+        elif evento.event_name=="impaciencia":
+            agente = evento.args
+            if(agente.preferencias["laboriosidad"]<0.4 and agente.creencias["regresa"]):
+                agente.creencias["parada_destino"]=agente.creencias["parada_origen"] #Regresa a la casa
+            if(0.3*agente.preferencias["condicion_fisica"]+0.7*agente.preferencias["ganancias"]>0.6):
+                evento_destino = Evento("destino", current_time+10, agente) #Coge un carro
+            else:
+                evento_destino = Evento("destino", current_time+40, agente) #Caminando
+                heapq.heappush(eventos, evento_destino)
+        
+        elif evento.event_name=="destino":
+            agente=evento.args
+            agente.creencias["parada_actual"]=agente.creencias["destino"]
+            if(agente.creencias["regresa"]):
+                agente.creencias["regresa"]=False
+                agente.creencias["destino"]=agente.creencias["parada_origen"]
+                evento_person_arrival=Evento("person_arrival", current_time+100, agente)
+                heapq.heappush(eventos, evento_person_arrival)
+            print(f"Agente {agente.id} llegó a su destino")
+
         elif evento.event_name == "init_bus":
             ruta = evento.args
             if(len(ruta)<1):
@@ -82,13 +102,13 @@ def simulacion(grafo, num_agentes, tiempo_max):
                         evento_person_arrival = Evento("person_arrival", current_time-0.01, pasajero)
                         heapq.heappush(eventos, evento_person_arrival)
                     else:
-                        print(f"Agente {pasajero.id} llegó a su destino en {parada_actual.nombre}")
+                        evento_destino = Evento("destino", current_time-0.01, pasajero)
+                        heapq.heappush(eventos, evento_destino)
             guagua.pasajeros = [p for p in guagua.pasajeros if p.creencias["parada_next"] != parada_actual]
             pasajeros_bajados = pasajeros_antes - len(guagua.pasajeros)
             if(pasajeros_bajados>0):
                 print(f"Pasajeros bajados en {parada_actual.nombre}: {pasajeros_bajados}")
             
-        
             # Subir pasajeros
             pasajeros_subidos = 0
             while guagua.has_capacity() and (guagua.id in parada_actual.colas) and len(parada_actual.colas[guagua.id])>0:
@@ -96,7 +116,6 @@ def simulacion(grafo, num_agentes, tiempo_max):
                 guagua.pasajeros.append(pasajero)
                 pasajeros_subidos += 1
             
-        
             guagua.position += 1
             if guagua.position < len(guagua.ruta):
                 tiempo_viaje = 10  # Tiempo fijo entre paradas, podría ser variable
