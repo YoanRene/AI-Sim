@@ -4,6 +4,8 @@ from graph import Grafo,cargar_datos
 from astar import a_star
 from utils import get_random_parada 
 import random
+import json
+
 class Evento:
     def __init__(self, event_name, time, args):
         self.event_name = event_name
@@ -40,16 +42,24 @@ def simulacion(grafo, num_agentes, tiempo_max):
     municipios_inicio= {}
     # Inicialización
     heapq.heappush(eventos, Evento("person_arrival", current_time-2,Agente(-1,grafo.get_parada('3108'),grafo.get_parada('917'))))
-    for i in range(num_agentes):
-        origen = get_random_parada(grafo)
-        if origen.county not in municipios_inicio:
-            municipios_inicio[origen.county] = 0
-        municipios_inicio[origen.county] +=1
-        destino = get_random_parada(grafo)
-        agente = Agente(i,origen,destino)
-        agentes.append(agente)
-        evento = Evento("person_arrival", current_time-1, agente)
-        heapq.heappush(eventos, evento)
+    
+    distribucion = json.load(open('data/distribucion.json',encoding="utf-8"))
+
+    for i in distribucion["house"]:
+        print(f'Creando {distribucion["house"][i]} personas en {i}')
+        for _ in range(distribucion["house"][i]):
+            origen = get_random_parada(grafo,i)
+            if origen.county not in municipios_inicio:
+                municipios_inicio[origen.county] = 0
+            municipios_inicio[origen.county] +=1
+
+            #Obtenemos el municipio de destino basado en la distribución
+            municipio_destino = random.choices(list(distribucion["work"].keys()), weights=distribucion["work"].values())[0]            
+            destino = get_random_parada(grafo,municipio_destino)
+            agente = Agente(i,origen,destino)
+            agentes.append(agente)
+            evento = Evento("person_arrival", current_time-1, agente)
+            heapq.heappush(eventos, evento)
 
     # Inicializar guaguas
     for ruta in grafo.rutas:

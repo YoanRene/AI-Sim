@@ -1,0 +1,36 @@
+{
+    "house":{
+        "Arroyo Naranjo":100,
+        "Revolution Square":500,
+        "Marianao":540,
+        "Playa":230,
+        "La Lisa":500,
+        "Habana del Este":630,
+        "La Habana Vieja":230,
+        "Boyeros":340,
+        "Centro Habana":300,
+        "Cotorro":300,
+        "Cerro":420,
+        "San Miguel del Padrón":400,
+        "Guanabacoa":400,
+        "Regla":300,
+        "Diez de Octubre":500
+    },
+    "work":{
+        "Arroyo Naranjo":8,
+        "Revolution Square":12,
+        "Marianao":2,
+        "Playa":20,
+        "La Lisa":5,
+        "Habana del Este":10,
+        "La Habana Vieja":20,
+        "Boyeros":30,
+        "Centro Habana":30,
+        "Cotorro":30,
+        "Cerro":42,
+        "San Miguel del Padrón":40,
+        "Guanabacoa":40,
+        "Regla":30,
+        "Diez de Octubre":50
+    }
+}

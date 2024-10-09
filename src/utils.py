@@ -1,6 +1,6 @@
 import random
 
-def get_random_parada(grafo):
+def get_random_parada(grafo, county=None):
     """
     Returns a random parada (stop) from the graph.
 
@@ -11,4 +11,5 @@ def get_random_parada(grafo):
         A random Parada object from the graph.
     """
     paradas = list(grafo.vertices.values())
-    return random.choice(paradas)
+    a = [p for p in paradas if p.county == county]
+    return random.choice(a)
