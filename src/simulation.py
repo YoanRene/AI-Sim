@@ -56,7 +56,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
     heapq.heappush(eventos, Evento("person_arrival", current_time - 2, Agente(-1, grafo.get_parada('3108'), grafo.get_parada('917'))))
 
     for i in distribucion["Municipio de Residencia"]:
-        for j in range(houses[i]):
+        for j in range(houses[i]//10000):
             origen = get_random_parada(grafo, i)
             if origen.county not in municipios_inicio:
                 municipios_inicio[origen.county] = 0
@@ -64,7 +64,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
 
             # Obtener el municipio de destino basado en la distribución
             municipio_destino = obtener_destino(i, distribucion)
-            destino = get_random_parada(grafo, municipio_destino)
+            destino = get_random_parada(grafo, municipio_destino,origen)
             agente = Agente(f'{i}-{j}', origen, destino)
             agentes.append(agente)
             evento = Evento("person_arrival", current_time - 1, agente)
