@@ -3,9 +3,11 @@ from astar import a_star
 from graph import Grafo,cargar_datos
 
 class Agente:
-    def __init__(self, id, parada_actual, destino):
+    def __init__(self, id, parada_actual, destino, regresa=True):
         self.id = id
-        self.creencias = {"regresa":True,"parada_origen":parada_actual,"parada_actual": parada_actual, "destino": destino,"parada_next":destino}
+        self.salida= 0
+        self.llegada = -1
+        self.creencias = {"regresa":regresa,"parada_origen":parada_actual,"parada_actual": parada_actual, "destino": destino,"parada_next":destino}
         self.deseos = ["llegar_destino"]
         self.intenciones = []
         # Preferencias del agente (ajusta los valores según la importancia)
