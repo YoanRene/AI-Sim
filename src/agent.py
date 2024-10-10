@@ -28,6 +28,7 @@ class Agente:
             grafo: El grafo del sistema de transporte.
             informacion_guaguas: Un diccionario con información sobre las guaguas (capacidad, etc.).
         """
+        self.creencias['paradas_next'] = []
         posibles_rutas = {}
         for estrategia in ["distancia", "menos_paradas", "ruta_fija"]:
             ruta = a_star(grafo, self.creencias["parada_actual"], self.creencias["destino"], estrategia)

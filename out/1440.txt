@@ -1,11 +1,8 @@
-Playa,1
-Revolution Square,1
-La Habana Vieja,1
-Habana del Este,1
-Guanabacoa,2
-Diez de Octubre,1
-Cerro,1
-Marianao,1
-La Lisa,1
+Playa,3
+Revolution Square,2
 Boyeros,1
+La Habana Vieja,1
+Diez de Octubre,2
+Centro Habana,1
+La Lisa,1
 Arroyo Naranjo,1
