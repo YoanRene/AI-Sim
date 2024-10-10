@@ -55,12 +55,12 @@ def heuristica(parada1, parada2, estrategia="distancia", grafo=None, ruta_actual
 
   else:
     raise ValueError("Estrategia de heurística no válida.")
-def a_star(grafo, origen, destino, estrategia="distancia"):
+def a_star(grafo, origen, destino, estrategia="distancia",guagua = None):
   """
   Implementa el algoritmo A* para encontrar la ruta entre dos paradas.
   """
   visitados = set()
-  cola_prioridad = [(0, origen, [(origen,None)])]
+  cola_prioridad = [(0, origen, [(origen,guagua)])]
   
   while cola_prioridad:
     coste_actual, parada_actual, ruta_actual = heappop(cola_prioridad)

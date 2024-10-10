@@ -54,7 +54,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
     houses = json.load(open('data/distribucion.json',encoding='utf-8'))['house']
     # Inicialización
     agentes_tempranos = 0
-    heapq.heappush(eventos, Evento("person_arrival", current_time - 2, Agente(-1, grafo.get_parada('1204'), grafo.get_parada('2432'),True)))
+    heapq.heappush(eventos, Evento("person_arrival", 79, Agente(-1, grafo.get_parada('1867'), grafo.get_parada('2682'),True)))
     t = sum(houses.values())
     for i in distribucion["Municipio de Residencia"]:
         for j in range(houses[i]//(t//num_agentes)):
@@ -84,6 +84,10 @@ def simulacion(grafo, num_agentes, tiempo_max):
     agentes_regresan_casa = 0
     agentes_destino = 0
     agente_bien = 0 
+
+    agentes_regresan_impaciencia = 0
+    agentes_carro = 0
+    agentes_caimando = 0
     #Evento para guardar los datos cada una hora para hacer analisis
     evento = Evento("save_data",current_time+60,None)
     heapq.heappush(eventos,evento)
@@ -104,7 +108,10 @@ def simulacion(grafo, num_agentes, tiempo_max):
                 agente.creencias["cursor_parada"]=0
                 agente.creencias["cursor_ruta"]=1
             else:
-                agente.creencias["cursor_parada"]+=1
+                if agente.creencias['repite']:
+                    agente.creencias['repite']=False
+                else:
+                    agente.creencias["cursor_parada"]+=1
                 # if agente.creencias["parada_actual"] != agente.creencias["destino"]:
                 #     if agente.creencias["cursor_ruta"] >= len(agente.intenciones):
                 #         agente.creencias["cursor_ruta"]=1
@@ -139,12 +146,8 @@ def simulacion(grafo, num_agentes, tiempo_max):
                         agente.creencias["cursor_ruta"]=1
                         evento = Evento('person_arrival',tiempo_regreso,agente)
                         heapq.heappush(eventos,evento)
-                if agente.creencias["cursor_ruta"] >= len(agente.intenciones):
-                    print("Por que?")
                 continue
             if(len(agente.intenciones)<2):
-                if agente.creencias["cursor_ruta"] >= len(agente.intenciones):
-                    print("Por que?")
                 continue
 
             # print(f"Agente {agente.id} llegó{' a pie' if agente.intenciones[1][1] == 'pie' else ''} a la parada {agente.creencias['parada_actual']}")
@@ -155,42 +158,41 @@ def simulacion(grafo, num_agentes, tiempo_max):
                 #Actualizamos sus creencias
                 agente.creencias["parada_actual"] = agente.intenciones[agente.creencias["cursor_ruta"]][0]
                 agente.creencias["cursor_ruta"]+=1
-                if agente.creencias["cursor_ruta"] >= len(agente.intenciones):
-                    print(f"Agente {agente.id} regreso a la parada {agente.creencias['parada_actual']}")
                 #Creamos el evento de llegada a la proxima parada
                 #TODO: Cambiar el +10 por alguna metrica que tenga que ver con la distancia entre paradas.
                 evento_person_arrival = Evento("person_arrival", current_time+10, agente)
                 #Lo agregamos al heap
                 heapq.heappush(eventos, evento_person_arrival)
-                if agente.creencias["cursor_ruta"] >= len(agente.intenciones):
-                    print("Por que?")
                 continue
 
             if proxima_guagua not in agente.creencias["parada_actual"].colas:
                 agente.creencias["parada_actual"].colas[proxima_guagua]=[]
             agente.creencias["parada_actual"].colas[proxima_guagua].append(agente)
-            if agente.creencias["cursor_ruta"] >= len(agente.intenciones):
-                    print("Por que?")
+            tiempo_impaciencia = agente.preferencias['paciencia'] * random.randint(60,120)
+            evento = Evento('impaciencia',current_time+tiempo_impaciencia,(agente,agente.creencias['parada_actual']))
+            heapq.heappush(eventos,evento)
         
         elif evento.event_name=="impaciencia":
-            agente = evento.args
+            agente, parada = evento.args
+            if agente.in_guagua or parada != agente.creencias['parada_actual']:
+                continue
+            # print("Impaciento")
             if(agente.preferencias["laboriosidad"]<0.4 and agente.creencias["regresa"]):
-                agente.creencias["parada_destino"]=agente.creencias["parada_origen"] #Regresa a la casa
-            if(0.3*agente.preferencias["condicion_fisica"]+0.7*agente.preferencias["ganancias"]>0.6):
-                evento_destino = Evento("destino", current_time+10, agente) #Coge un carro
-            else:
-                evento_destino = Evento("destino", current_time+40, agente) #Caminando
-                heapq.heappush(eventos, evento_destino)
-        
-        elif evento.event_name=="destino":
-            agente=evento.args
-            agente.creencias["parada_actual"]=agente.creencias["destino"]
-            if(agente.creencias["regresa"]):
-                agente.creencias["regresa"]=False
+                #Regresa a la casa
+                agentes_regresan_impaciencia +=1
                 agente.creencias["destino"]=agente.creencias["parada_origen"]
-                evento_person_arrival=Evento("person_arrival", current_time+100, agente)
-                heapq.heappush(eventos, evento_person_arrival)
-            print(f"Agente {agente.id} llegó a su destino")
+            #Sale de la parada
+            agente.creencias['parada_actual'].colas[agente.intenciones[agente.creencias["cursor_ruta"]][1]].remove(agente)
+            agente.creencias['parada_actual']=agente.creencias['destino']
+            if(0.3*agente.preferencias["condicion_fisica"]+0.7*agente.preferencias["ganancias"]>0.6):
+                #Coge un carro para el destino
+                agentes_carro+=1
+                evento_destino = Evento("person_arrival", current_time+10, agente) 
+            else:
+                #Caminando
+                agentes_caimando+=1
+                evento_destino = Evento("person_arrival", current_time+40, agente) 
+            heapq.heappush(eventos, evento_destino)
 
         elif evento.event_name == "init_bus":
             """
@@ -204,7 +206,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
             heapq.heappush(eventos, evento_siguiente)
             #Iniciamos una nueva guagua en un tiempo aleatorio
             # next_time = np.random.exponential(rutas_config[guagua.id])
-            new_guagua = Evento('init_bus',current_time + random.randint(100,200),ruta)
+            new_guagua = Evento('init_bus',current_time + random.randint(15,60),ruta)
             heapq.heappush(eventos,new_guagua)
         elif evento.event_name == "next_stop":
             """
@@ -214,19 +216,19 @@ def simulacion(grafo, num_agentes, tiempo_max):
             parada_actual = guagua.ruta[guagua.position][0]
             if(not parada_actual):
                 continue
-
+            #se monta en 3187 hasta el 2668
             # Bajar pasajeros
             pasajeros_antes = len(guagua.pasajeros)
             for pasajero in guagua.pasajeros:
                 pasajero.creencias["cursor_ruta"]+=1
                 if parada_actual not in [x for x,_ in pasajero.intenciones]:
                     print("Mango")
-                if pasajero.creencias["cursor_ruta"] >= len(pasajero.intenciones):
-                    print(f"Agente {agente.id} regreso a la parada {agente.creencias['parada_actual']}")
-                
+               
                 if pasajero.creencias["paradas_next"][pasajero.creencias["cursor_parada"]] == parada_actual or guagua.position == len(guagua.ruta)-1:
                     pasajero.creencias["parada_actual"] = parada_actual
+                    pasajero.in_guagua = False
                     if pasajero.creencias["destino"] != parada_actual:
+                        pasajero.creencias["repite"]=guagua.position == len(guagua.ruta)-1 and not pasajero.creencias["paradas_next"][pasajero.creencias["cursor_parada"]] == parada_actual
                         evento_person_arrival = Evento("person_arrival", current_time-0.01, pasajero)
                         heapq.heappush(eventos, evento_person_arrival)
                     else:
@@ -243,8 +245,6 @@ def simulacion(grafo, num_agentes, tiempo_max):
                                 heapq.heappush(eventos,evento)
                         print(f"Agente {pasajero.id} llegó a su destino en {parada_actual.nombre}")
                         pass
-                if pasajero.creencias["cursor_ruta"] >= len(pasajero.intenciones):
-                    print("Por que?")
             guagua.pasajeros = [p for p in guagua.pasajeros if p.creencias["paradas_next"][p.creencias["cursor_parada"]] != parada_actual and guagua.position != len(guagua.ruta)-1]
             pasajeros_bajados = pasajeros_antes - len(guagua.pasajeros)
             if(pasajeros_bajados>0):
@@ -254,9 +254,21 @@ def simulacion(grafo, num_agentes, tiempo_max):
             pasajeros_subidos = 0
             while guagua.has_capacity() and (guagua.id in parada_actual.colas) and len(parada_actual.colas[guagua.id])>0 and guagua.position < len(guagua.ruta) - 1:
                 pasajero = parada_actual.colas[guagua.id].pop(0)
+                pasajero.in_guagua = True
                 guagua.pasajeros.append(pasajero)
                 pasajeros_subidos += 1
             
+            #Si la guagua tiene capacidad el resto de los pasajeros en la parada se lo piensa
+            if guagua.has_capacity() and guagua.position < len(guagua.ruta) - 1:
+                for cola in parada_actual.colas.values():
+                    for pasajero in cola:
+                        if not guagua.has_capacity():
+                            break
+                        if pasajero.piensa_cambiar_ruta(grafo,guagua):
+                            pasajero.in_guagua =True
+                            guagua.pasajeros.append(pasajero)
+                            cola.remove(pasajero)
+
             guagua.position += 1
             if guagua.position < len(guagua.ruta):
                 tiempo_viaje = 10  # Tiempo fijo entre paradas, podría ser variable
@@ -291,19 +303,26 @@ def simulacion(grafo, num_agentes, tiempo_max):
     print(" Agentes que salieron para el trabajo antes de las 9pm:",agentes_tempranos)
     print(" Viajes Completados:",agentes_destino)
     print(" Destinos Completados:",agente_bien)
+    print(" Agentes que regresaron a la casa sin llegar al trabajo:",agentes_regresan_impaciencia)
+    print(" Agentes que se van en carro:",agentes_carro)
+    print(" Agentes que se van caminando:",agentes_caimando)
+
     time_of_travel = 0
     municipios = {}
     for agente in agentes:
         if agente.creencias['parada_actual'] != agente.creencias['destino'] and agente.salida<=900:
-            print(f"Agente {agente.id} no llegó a su destino")
-            print(f'Salio a las {agente.salida} de {agente.creencias["parada_origen"].nombre}')
-            print(f'Se quedo en la parada {agente.creencias["parada_actual"].nombre}')
-            #Mostrar todas las guaguas que pasan por la parada en que se quedo
-            for guagua in agente.creencias["parada_actual"].colas:
-                print(f'Guagua {guagua} en la parada {agente.creencias["parada_actual"].nombre}')
-            print(f'Proxima guagua: {agente.intenciones[1][1]}')
-            print(f'Proxima parada: {agente.intenciones[1][0].nombre}')
-            print(f'Destino: {agente.creencias["destino"].nombre}')
+            # print(f"Agente {agente.id} no llegó a su destino")
+            # print(f'Salio a las {agente.salida} de {agente.creencias["parada_origen"].nombre}')
+            # print(f'Se quedo en la parada {agente.creencias["parada_actual"].nombre}')
+            # #Mostrar todas las guaguas que pasan por la parada en que se quedo
+            # for guagua in agente.creencias["parada_actual"].colas:
+            #     print(f'Guagua {guagua} en la parada {agente.creencias["parada_actual"].nombre}')
+            # if len(agente.intenciones)==0:
+            #     print("Agente en el trabajo")
+            # else:
+            #     print(f'Proxima guagua: {agente.intenciones[1][1]}')
+            #     print(f'Proxima parada: {agente.intenciones[1][0].nombre}')
+            #     print(f'Destino: {agente.creencias["destino"].nombre}')
             pass
         else:
             time_of_travel += agente.llegada-agente.salida
@@ -322,4 +341,4 @@ def simulacion(grafo, num_agentes, tiempo_max):
 if __name__ == '__main__':
     grafo=Grafo()
     cargar_datos(grafo)
-    simulacion(grafo, num_agentes=20, tiempo_max=1440)  # Simular 30 minutos con 50 agentes    simulacion(grafo, num_agentes=100, tiempo_max=3600)  # Simular 1 hora con 100 agentes
+    simulacion(grafo, num_agentes=200, tiempo_max=1440)  # Simular 30 minutos con 50 agentes    simulacion(grafo, num_agentes=100, tiempo_max=3600)  # Simular 1 hora con 100 agentes
