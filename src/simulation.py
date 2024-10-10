@@ -85,7 +85,10 @@ def simulacion(grafo, num_agentes, tiempo_max):
             Un agente llega a una parada y decide qué guagua tomar.
             """
             agente = evento.args
-            agente.elegir_ruta(grafo)
+            if(len(agente.intenciones)==0):
+                agente.elegir_ruta(grafo)
+            else:
+                agente.creencias["cursor_parada"]+=1
             if agente.creencias["parada_actual"] == agente.creencias["destino"]:
                 print(f"Agente {agente.id} llegó su destino en {agente.creencias['parada_actual']}")
                 agente_en_destino +=1
@@ -93,12 +96,13 @@ def simulacion(grafo, num_agentes, tiempo_max):
             if(len(agente.intenciones)<2):
                 continue
             # print(f"Agente {agente.id} llegó{' a pie' if agente.intenciones[1][1] == 'pie' else ''} a la parada {agente.creencias['parada_actual']}")
-            proxima_guagua = agente.intenciones[1][1]  # Asumiendo que intenciones[1] es (parada, guagua)
+            proxima_guagua = agente.intenciones[agente.creencias["cursor_ruta"]][1]  # Asumiendo que intenciones[1] es (parada, guagua)
 
             if proxima_guagua == "pie":
                 # Cuando tiene que ir para la proxima parada a pie
                 #Actualizamos sus creencias
-                agente.creencias["parada_actual"] = agente.intenciones[1][0]
+                agente.creencias["parada_actual"] = agente.intenciones[agente.creencias["cursor_ruta"]][0]
+                agente.creencias["cursor_ruta"]+=1
                 #Creamos el evento de llegada a la proxima parada
                 #TODO: Cambiar el +10 por alguna metrica que tenga que ver con la distancia entre paradas.
                 evento_person_arrival = Evento("person_arrival", current_time+10, agente)
@@ -156,7 +160,8 @@ def simulacion(grafo, num_agentes, tiempo_max):
             # Bajar pasajeros
             pasajeros_antes = len(guagua.pasajeros)
             for pasajero in guagua.pasajeros:
-                if pasajero.creencias["parada_next"] == parada_actual or guagua.position == len(guagua.ruta)-1:
+                pasajero.creencias["cursor_ruta"]+=1
+                if pasajero.creencias["paradas_next"][pasajero.creencias["cursor_parada"]] == parada_actual or guagua.position == len(guagua.ruta)-1:
                     pasajero.creencias["parada_actual"] = parada_actual
                     if pasajero.creencias["destino"] != parada_actual:
                         evento_person_arrival = Evento("person_arrival", current_time-0.01, pasajero)
@@ -165,7 +170,8 @@ def simulacion(grafo, num_agentes, tiempo_max):
                         agente_en_destino +=1
                         print(f"Agente {pasajero.id} llegó a su destino en {parada_actual.nombre}")
                         pass
-            guagua.pasajeros = [p for p in guagua.pasajeros if p.creencias["parada_next"] != parada_actual]
+
+            guagua.pasajeros = [p for p in guagua.pasajeros if p.creencias["paradas_next"][p.creencias["cursor_parada"]] != parada_actual]
             pasajeros_bajados = pasajeros_antes - len(guagua.pasajeros)
             if(pasajeros_bajados>0):
                 print(f"Pasajeros bajados en {parada_actual.nombre}: {pasajeros_bajados}")

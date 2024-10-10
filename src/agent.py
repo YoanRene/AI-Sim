@@ -5,7 +5,7 @@ from graph import Grafo,cargar_datos
 class Agente:
     def __init__(self, id, parada_actual, destino):
         self.id = id
-        self.creencias = {"regresa":True,"parada_origen":parada_actual,"parada_actual": parada_actual, "destino": destino,"parada_next":destino}
+        self.creencias = {"regresa":True,"parada_origen":parada_actual,"parada_actual": parada_actual, "destino": destino,"paradas_next":[],"cursor_parada":0,"cursor_ruta":1}
         self.deseos = ["llegar_destino"]
         self.intenciones = []
         # Preferencias del agente (ajusta los valores según la importancia)
@@ -38,11 +38,12 @@ class Agente:
         if posibles_rutas:
             mejor_estrategia, (mejor_ruta, _) = max(posibles_rutas.items(), key=lambda item: item[1][1])
             self.intenciones = mejor_ruta
-            self.creencias["parada_next"]=self.creencias["destino"]
             for i in range(1,len(mejor_ruta)-1):
                 if mejor_ruta[i][1]!=mejor_ruta[i+1][1]:
-                    self.creencias["parada_next"] = mejor_ruta[i][0]
-                    break
+                    self.creencias["paradas_next"].append(mejor_ruta[i][0])
+                elif mejor_ruta[i][1]=="pie":
+                    self.creencias["paradas_next"].append(mejor_ruta[i][0])
+            self.creencias["paradas_next"].append(self.creencias["destino"])
             # print(f"Agente {self.id} eligió ruta con estrategia: {mejor_estrategia}")
         else:
             print(f"Agente {self.id} no encontró una ruta viable.")
