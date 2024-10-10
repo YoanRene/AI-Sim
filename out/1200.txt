@@ -1,6 +1,8 @@
-Cerro,2
-Guanabacoa,2
-Revolution Square,3
-Playa,2
-Boyeros,2
-Marianao,1
+Playa,4
+Revolution Square,1
+Centro Habana,1
+Habana del Este,1
+San Miguel del Padrón,2
+Diez de Octubre,1
+Cerro,1
+Boyeros,1

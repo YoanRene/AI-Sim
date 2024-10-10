@@ -1,9 +1,10 @@
-Playa,3
+Playa,1
+Revolution Square,1
 Centro Habana,1
-La Habana Vieja,1
+Habana del Este,1
 Guanabacoa,1
 San Miguel del Padrón,1
-Cerro,1
+Cerro,2
 Marianao,1
 La Lisa,1
 Boyeros,1

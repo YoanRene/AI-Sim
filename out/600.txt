@@ -1,9 +1,9 @@
-Playa,4
-Centro Habana,1
+Centro Habana,2
+Playa,1
 La Habana Vieja,1
-Guanabacoa,1
-Cotorro,1
+Habana del Este,1
+San Miguel del Padrón,2
 Cerro,1
 Revolution Square,1
+Marianao,2
 Boyeros,1
-Arroyo Naranjo,1
