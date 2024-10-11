@@ -12,6 +12,7 @@ class Agente:
         self.deseos = ["llegar_destino"]
         self.intenciones = []
         self.puntuacion_ruta = 0
+        self.tiempo_impaciencia=-1
         # Preferencias del agente (ajusta los valores según la importancia)
         self.preferencias = {
             "rapidez": random.random(),

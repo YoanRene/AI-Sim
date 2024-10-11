@@ -54,7 +54,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
     houses = json.load(open('data/distribucion.json',encoding='utf-8'))['house']
     # Inicialización
     agentes_tempranos = 0
-    heapq.heappush(eventos, Evento("person_arrival", 79, Agente(-1, grafo.get_parada('1867'), grafo.get_parada('2682'),True)))
+    heapq.heappush(eventos, Evento("person_arrival", 66, Agente(-1, grafo.get_parada('1867'), grafo.get_parada('2682'),True)))
     t = sum(houses.values())
     for i in distribucion["Municipio de Residencia"]:
         for j in range(houses[i]//(t//num_agentes)):
@@ -169,12 +169,13 @@ def simulacion(grafo, num_agentes, tiempo_max):
                 agente.creencias["parada_actual"].colas[proxima_guagua]=[]
             agente.creencias["parada_actual"].colas[proxima_guagua].append(agente)
             tiempo_impaciencia = agente.preferencias['paciencia'] * random.randint(60,120)
+            agente.tiempo_impaciencia =current_time+tiempo_impaciencia
             evento = Evento('impaciencia',current_time+tiempo_impaciencia,(agente,agente.creencias['parada_actual']))
             heapq.heappush(eventos,evento)
         
         elif evento.event_name=="impaciencia":
             agente, parada = evento.args
-            if agente.in_guagua or parada != agente.creencias['parada_actual']:
+            if agente.in_guagua or parada != agente.creencias['parada_actual'] or current_time!= agente.tiempo_impaciencia:
                 continue
             # print("Impaciento")
             if(agente.preferencias["laboriosidad"]<0.4 and agente.creencias["regresa"]):
@@ -221,11 +222,13 @@ def simulacion(grafo, num_agentes, tiempo_max):
             pasajeros_antes = len(guagua.pasajeros)
             for pasajero in guagua.pasajeros:
                 pasajero.creencias["cursor_ruta"]+=1
+                pasajero.creencias["parada_actual"] = parada_actual
+                if pasajero.creencias['parada_actual'] != pasajero.intenciones[pasajero.creencias["cursor_ruta"]-1][0] :
+                    print('pp')
                 if parada_actual not in [x for x,_ in pasajero.intenciones]:
                     print("Mango")
                
                 if pasajero.creencias["paradas_next"][pasajero.creencias["cursor_parada"]] == parada_actual or guagua.position == len(guagua.ruta)-1:
-                    pasajero.creencias["parada_actual"] = parada_actual
                     pasajero.in_guagua = False
                     if pasajero.creencias["destino"] != parada_actual:
                         pasajero.creencias["repite"]=guagua.position == len(guagua.ruta)-1 and not pasajero.creencias["paradas_next"][pasajero.creencias["cursor_parada"]] == parada_actual
@@ -254,6 +257,7 @@ def simulacion(grafo, num_agentes, tiempo_max):
             pasajeros_subidos = 0
             while guagua.has_capacity() and (guagua.id in parada_actual.colas) and len(parada_actual.colas[guagua.id])>0 and guagua.position < len(guagua.ruta) - 1:
                 pasajero = parada_actual.colas[guagua.id].pop(0)
+                pasajero.tiempo_impaciencia =-1
                 pasajero.in_guagua = True
                 guagua.pasajeros.append(pasajero)
                 pasajeros_subidos += 1
@@ -265,6 +269,8 @@ def simulacion(grafo, num_agentes, tiempo_max):
                         if not guagua.has_capacity():
                             break
                         if pasajero.piensa_cambiar_ruta(grafo,guagua):
+                            pasajero.tiempo_impaciencia =-1
+
                             pasajero.in_guagua =True
                             guagua.pasajeros.append(pasajero)
                             cola.remove(pasajero)
@@ -341,4 +347,4 @@ def simulacion(grafo, num_agentes, tiempo_max):
 if __name__ == '__main__':
     grafo=Grafo()
     cargar_datos(grafo)
-    simulacion(grafo, num_agentes=200, tiempo_max=1440)  # Simular 30 minutos con 50 agentes    simulacion(grafo, num_agentes=100, tiempo_max=3600)  # Simular 1 hora con 100 agentes
+    simulacion(grafo, num_agentes=1000, tiempo_max=1440)  # Simular 30 minutos con 50 agentes    simulacion(grafo, num_agentes=100, tiempo_max=3600)  # Simular 1 hora con 100 agentes

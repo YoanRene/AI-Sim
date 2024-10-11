@@ -79,8 +79,6 @@ def cargar_datos(grafo):
                 codigo_parada2, _ = paradas_de_la_ruta[i + 1]
                 parada1 = next((p for p in grafo.vertices.values() if p.codigo == codigo_parada1), None)
                 if len(ruta)==0 or parada1 != ruta[len(ruta)-1][0]:
-                    if parada1.id == '3187':
-                        print("Hay")
                     ruta.append((parada1,id,nombre))
                 parada2 = next((p for p in grafo.vertices.values() if p.codigo == codigo_parada2), None)
                 if(i==len(paradas_de_la_ruta)-2):
