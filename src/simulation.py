@@ -10,25 +10,29 @@ import numpy as np
 import pandas as pd
 
 # Cargar configuración desde JSON
-with open("config.json", "r") as f:
-    config = json.load(f)
+def cargar_configuracion(filepath):
+    with open(filepath, "r") as f:
+        config = json.load(f)
+    return config
 
 # Acceder a los parámetros de configuración
-BUS_CAPACITY = config["bus_capacity"]
-SIMULATION_TIME = config["simulation_time"]
-NUM_AGENTS = config["num_agents"]
-DISTRIBUTION_FILE = config["distribution_file"]
-HOUSES_FILE = config["houses_file"]
-OUTPUT_INTERVAL = config["output_interval"]
-# Probabilidad de que un agente regrese a casa (del 0 al 1)
-RETURN_PROBABILITY = config["return_probability"]
+def get_config_values(config):
+    BUS_CAPACITY = config["bus_capacity"]
+    SIMULATION_TIME = config["simulation_time"]
+    NUM_AGENTS = config["num_agents"]
+    DISTRIBUTION_FILE = config["distribution_file"]
+    HOUSES_FILE = config["houses_file"]
+    OUTPUT_INTERVAL = config["output_interval"]
+    # Probabilidad de que un agente regrese a casa (del 0 al 1)
+    RETURN_PROBABILITY = config["return_probability"]
 
-# Intervalos de tiempo de salida y sus pesos
-DEPARTURE_INTERVALS = config["departure_intervals"]["intervals"]
-DEPARTURE_WEIGHTS = config["departure_intervals"]["weights"]
+    # Intervalos de tiempo de salida y sus pesos
+    DEPARTURE_INTERVALS = config["departure_intervals"]["intervals"]
+    DEPARTURE_WEIGHTS = config["departure_intervals"]["weights"]
 
-# Frecuencia de salida de guaguas por ruta (en minutos)
-BUS_FREQUENCIES = config.get("bus_frequencies", {})  # Diccionario ruta:frecuencia
+    # Frecuencia de salida de guaguas por ruta (en minutos)
+    BUS_FREQUENCIES = config.get("bus_frequencies", {})  # Diccionario ruta:frecuencia
+    return BUS_CAPACITY, SIMULATION_TIME, NUM_AGENTS, DISTRIBUTION_FILE, HOUSES_FILE, OUTPUT_INTERVAL, RETURN_PROBABILITY, DEPARTURE_INTERVALS, DEPARTURE_WEIGHTS, BUS_FREQUENCIES
 
 
 def cargar_distribucion(filepath):
@@ -57,7 +61,7 @@ class Guagua:
     def has_capacity(self):
         return BUS_CAPACITY  # Assuming a capacity of 50
 
-def simulacion(grafo, num_agentes, tiempo_max):
+def simulacion(grafo, num_agentes, tiempo_max, config):
     """
     Simula un sistema de transporte público con agentes que viajan en guaguas
     entre paradas.
@@ -66,7 +70,10 @@ def simulacion(grafo, num_agentes, tiempo_max):
         grafo: Grafo que representa el sistema de transporte público.
         num_agentes: Número de agentes que se inicializarán en la simulación.
         tiempo_max: Tiempo máximo de simulación en segundos.
+        config: Diccionario con la configuración de la simulación
     """
+    global BUS_CAPACITY, SIMULATION_TIME, NUM_AGENTS, DISTRIBUTION_FILE, HOUSES_FILE, OUTPUT_INTERVAL, RETURN_PROBABILITY, DEPARTURE_INTERVALS, DEPARTURE_WEIGHTS, BUS_FREQUENCIES
+    BUS_CAPACITY, SIMULATION_TIME, NUM_AGENTS, DISTRIBUTION_FILE, HOUSES_FILE, OUTPUT_INTERVAL, RETURN_PROBABILITY, DEPARTURE_INTERVALS, DEPARTURE_WEIGHTS, BUS_FREQUENCIES = get_config_values(config)
     eventos = []
     current_time = 0
 
@@ -101,10 +108,20 @@ def simulacion(grafo, num_agentes, tiempo_max):
             heapq.heappush(eventos, evento)
     # Inicializar guaguas
     for ruta in grafo.rutas:
-        ruta_id = ruta[0][1] # Obtener el ID de la ruta
+        ruta_id = ruta[0][2] # Obtener el ID de la ruta
         frequency = BUS_FREQUENCIES.get(ruta_id, (15, 60)) # Obtener la frecuencia o usar el valor por defecto (15, 60)
-        evento = Evento("init_bus", current_time, (ruta, frequency)) # Pasar la frecuencia junto con la ruta
-        heapq.heappush(eventos, evento)
+        if len(frequency)==1:
+            new_guagua = Evento(
+                "init_bus", current_time + frequency[0], (ruta,frequency)
+            )
+        else:
+            min_freq, max_freq = frequency  # Obtener los valores mínimo y máximo de la frecuencia
+            new_guagua = Evento(
+                "init_bus", current_time + random.randint(min_freq, max_freq), (ruta,frequency)
+            )
+        
+        # evento = Evento("init_bus", current_time, (ruta, frequency)) # Pasar la frecuencia junto con la ruta
+        heapq.heappush(eventos, new_guagua)
     agentes_llegan_trabajo = 0
     agentes_regresan_casa = 0
     agentes_destino = 0
@@ -311,32 +328,16 @@ def simulacion(grafo, num_agentes, tiempo_max):
         personas_en_cola = sum(len(colas) for colas in parada.colas.values())
         if personas_en_cola>0:
             print(f"Parada {parada} tiene {personas_en_cola} personas en cola")
-def start_simulation():
-    # Cargar configuración desde JSON
-    with open("config.json", "r") as f:
-        config = json.load(f)
+def start_simulation(config_filepath):
+    # Cargar configuración desde el archivo JSON
+    config = cargar_configuracion(config_filepath)
 
-    # Acceder a los parámetros de configuración
-    BUS_CAPACITY = config["bus_capacity"]
-    SIMULATION_TIME = config["simulation_time"]
-    NUM_AGENTS = config["num_agents"]
-    DISTRIBUTION_FILE = config["distribution_file"]
-    HOUSES_FILE = config["houses_file"]
-    OUTPUT_INTERVAL = config["output_interval"]
-    # Probabilidad de que un agente regrese a casa (del 0 al 1)
-    RETURN_PROBABILITY = config["return_probability"]
-
-    # Intervalos de tiempo de salida y sus pesos
-    DEPARTURE_INTERVALS = config["departure_intervals"]["intervals"]
-    DEPARTURE_WEIGHTS = config["departure_intervals"]["weights"]
-
-    # Frecuencia de salida de guaguas por ruta (en minutos)
-    BUS_FREQUENCIES = config.get("bus_frequencies", {})  # Diccionario ruta:frecuencia
+    # Crear el grafo
     grafo=Grafo()
     cargar_datos(grafo)
-    simulacion(grafo, num_agentes=NUM_AGENTS,tiempo_max= SIMULATION_TIME)  # Simular 30 minutos con 50 agentes    simulacion(grafo, num_agentes=100, tiempo_max=3600)  # Simular 1 hora con 100 agentes
+
+    # Iniciar la simulación
+    simulacion(grafo, num_agentes=config["num_agents"], tiempo_max=config["simulation_time"], config=config)
 # Uso en la simulación
 if __name__ == '__main__':
-    grafo=Grafo()
-    cargar_datos(grafo)
-    simulacion(grafo, num_agentes=NUM_AGENTS,tiempo_max= SIMULATION_TIME)  # Simular 30 minutos con 50 agentes    simulacion(grafo, num_agentes=100, tiempo_max=3600)  # Simular 1 hora con 100 agentes
+    start_simulation("config.json")  # Simular utilizando el archivo "config.json"

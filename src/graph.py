@@ -68,7 +68,7 @@ def cargar_datos(grafo):
     with open('data/rutas.csv', 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         next(reader)  # Saltar cabecera
-        for id, ruta, nombre, terminal, origen, destino, *_ in reader:
+        for id, ruta_nombre, nombre, terminal, origen, destino, *_ in reader:
 
             # Obtener las paradas de la ruta (asumiendo que están ordenadas)
             paradas_de_la_ruta = paradas_por_ruta.get(id, [])
@@ -79,10 +79,10 @@ def cargar_datos(grafo):
                 codigo_parada2, _ = paradas_de_la_ruta[i + 1]
                 parada1 = next((p for p in grafo.vertices.values() if p.codigo == codigo_parada1), None)
                 if len(ruta)==0 or parada1 != ruta[len(ruta)-1][0]:
-                    ruta.append((parada1,id,nombre))
+                    ruta.append((parada1,id,ruta_nombre.strip()))
                 parada2 = next((p for p in grafo.vertices.values() if p.codigo == codigo_parada2), None)
                 if(i==len(paradas_de_la_ruta)-2):
-                    ruta.append((parada2,id,nombre))
+                    ruta.append((parada2,id,ruta_nombre.strip()))
                 if parada1 and parada2:
                     grafo.agregar_arista(parada1, parada2, id)
             grafo.rutas.append(ruta)
