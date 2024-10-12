@@ -53,8 +53,8 @@ Use this JSON schema:
           },
           "output_interval": {
             "type": "integer",
-            "description": "Intervalo de tiempo en segundos para guardar los datos.",
-            "example": 3600
+            "description": "Intervalo de tiempo en minutos para guardar los datos.",
+            "example": 60
           },
           "return_probability": {
             "type": "number",
@@ -131,7 +131,7 @@ output:
     "num_agents": 1500,
     "distribution_file": "data/distribucion.csv",
     "houses_file": "data/distribucion.json",
-    "output_interval": 3600,
+    "output_interval": 60,
     "return_probability": 0.8,
     "departure_intervals": {
       "intervals": [[0, 180], [180, 300], [300, 540], [540, 660], [660, 900], [900, 1440]],

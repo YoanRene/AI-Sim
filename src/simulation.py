@@ -8,6 +8,7 @@ import random
 import json
 import numpy as np
 import pandas as pd
+import csv
 
 # Cargar configuración desde JSON
 def cargar_configuracion(filepath):
@@ -130,8 +131,12 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
     agentes_regresan_impaciencia = 0
     agentes_carro = 0
     agentes_caimando = 0
+    
+    # Crear un diccionario para almacenar los datos de la simulación
+    datos_simulacion = {}
+
     #Evento para guardar los datos cada una hora para hacer analisis
-    evento = Evento("save_data",current_time+OUTPUT_INTERVAL,None)
+    evento = Evento("save_data",current_time+OUTPUT_INTERVAL,(datos_simulacion, municipios_inicio))
     heapq.heappush(eventos,evento)
 
     # Bucle principal de simulación
@@ -288,7 +293,8 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
             
         elif evento.event_name == "save_data":
             #Programamos el evento para la proxima hora
-            evento = Evento("save_data",current_time+OUTPUT_INTERVAL,None)
+            datos_simulacion, municipios_inicio = evento.args
+            evento = Evento("save_data",current_time+OUTPUT_INTERVAL,(datos_simulacion, municipios_inicio))
             heapq.heappush(eventos,evento)
 
             #Guardamos datos
@@ -297,11 +303,20 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                 if agente.parada_actual().county not in municipios:
                     municipios[agente.parada_actual().county] = 0
                 municipios[agente.parada_actual().county] +=1
-            with open(f'out/{current_time}.txt','w',encoding='utf-8') as file:
-                for k,v in municipios.items():
-                    file.write(f'{k},{v}\n')
-                    # print(f'Municipio {k} tiene {municipios_inicio[k] if k in municipios_inicio else 0} agentes al pricipio y {v} al final')
-        print(f'{current_time}', end='\r')
+
+            datos_simulacion[current_time] = municipios
+            
+    with open('output.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        # Obtener la lista de municipios de los datos iniciales (o de cualquier hora en datos_simulacion)
+        municipios = list(municipios_inicio.keys())
+        # Escribir la primera fila con los nombres de los municipios
+        writer.writerow(['Hora'] + municipios)
+        
+        # Escribir los datos de cada hora
+        for hora, datos_hora in sorted(datos_simulacion.items()):
+            fila = [hora] + [datos_hora.get(municipio, 0) for municipio in municipios]
+            writer.writerow(fila)
 
     print(f"\n\nSimulación con {len(agentes)} agentes completada:\n Agentes que llegaron al trabajo:", agentes_llegan_trabajo)
     print(" Agentes que regresaron a la casa:",agentes_regresan_casa)
@@ -340,4 +355,4 @@ def start_simulation(config_filepath):
     simulacion(grafo, num_agentes=config["num_agents"], tiempo_max=config["simulation_time"], config=config)
 # Uso en la simulación
 if __name__ == '__main__':
-    start_simulation("config.json")  # Simular utilizando el archivo "config.json"
+    start_simulation("src/config.json")  # Simular utilizando el archivo "config.json"
