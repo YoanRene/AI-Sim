@@ -184,16 +184,16 @@ j = result.text.split('```')[1][4:]
 json_result = json.loads(j)
 
 # Guardar el JSON en un archivo
-with open("generated_config.json", "w") as f:
+with open("out/generated_config.json", "w") as f:
     json.dump(json_result, f)
 
 # Iniciar la simulación usando el JSON generado
-start_simulation("generated_config.json")
+start_simulation("out/generated_config.json")
 # start_simulation()
 
-resultados_formateados = cargar_resultados("output.csv")
+resultados_formateados = cargar_resultados("out/output.csv")
 resultados = ""
-with open("output.csv", "r") as f:
+with open("out/output.csv", "r") as f:
     resultados = f.read()
 
 print(resultados_formateados)
