@@ -208,8 +208,12 @@ es decir, 60 seria que paso una hora de simulacion, por tanto serian las 7am.
 
 """+resultados+"""
 
-Dale una respuesta al usuario teniendo en cuenta esos datos
+Dale una respuesta al usuario teniendo en cuenta esos datos. Haz un analisis estadistico completo con
+los resultados, puedes usar codigo python con pandas y matplotlib para generar un graficos, pero cada imagen
+no se debe mostrar, solo guardar en un archivo .png en cual debe ser referenciado justo debajo del codigo
+en cuestion de la siguiente forma [nombre_del_archivo.png]
 """
 
 result = model.generate_content(prompt2)
 print(result.text)
+open('aaa.md','w',encoding='utf-8').write(result.text)
