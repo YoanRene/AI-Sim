@@ -2,8 +2,8 @@
     "bus_capacity": 50,
     "simulation_time": 1440, 
     "num_agents": 1000,
-    "distribution_file": "data/distribucion.csv",
-    "houses_file": "data/distribucion.json",
+    "distribution_file": "data/distribucion_trabajo.csv",
+    "houses_file": "data/distribucion_poblacion.json",
     "output_interval": 60,
     "return_probability": 0.8,
     "departure_intervals": {
