@@ -2,8 +2,6 @@ import random
 from astar import a_star
 from graph import Grafo,cargar_datos
 from haversine import haversine
-
-from simulation import Evento
 class Agente:
     def __init__(self, id, parada_actual, destino, regresa=True):
         self.id = id
@@ -20,7 +18,11 @@ class Agente:
             "destino": destino, #Parada a la cual se dirige el agente
             "paradas_next":[], #Lista de paradas donde el agente cambia de guagua
             "current_time":0,
-            "ruta_planificada":[]
+            "ruta_planificada":[],
+            "llego_trabajo": False,
+            "regreso_casa":False,
+            "cogio_carro":False,
+            "caminando":False
             }
         
         self.intenciones = ['salir de casa']
@@ -47,6 +49,7 @@ class Agente:
                 self.intenciones.remove('salir de casa')
             self.deseos = ["regresar a casa"]
         #Sale de la parada
+        self.tiempo_impaciencia = -1
         self.creencias['parada_actual'].colas[self.proxima_guagua()].remove(self)
         self.creencias['parada_actual']=self.creencias['destino']
         final = self.parada_actual()
@@ -217,10 +220,10 @@ class Agente:
         # if tiempo_promedio_ruta(self.creencias['ruta_actual'][self.cursor_ruta-1:])+self.creencias['current_time']>=self.creencias['horario_llegada']:
         #     if 'llegar_temprano' in self.deseos:
         #         self.intenciones = ['coger carro']
-        if self.creencias["current_time"] >= self.tiempo_impaciencia:
+        if self.tiempo_impaciencia!=-1 and self.creencias["current_time"] >= self.tiempo_impaciencia:
             if not self.in_guagua:
                 t = self.impaciente()
-                return Evento('person_arrival',current_time+ t , self)
+                return ('person_arrival',current_time+ t , self)
                 # #Regresa a la casa
                 # if "regresa a casa" in self.deseos:
                 #     agentes_regresan_impaciencia +=1
