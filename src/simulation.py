@@ -85,7 +85,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
     houses = json.load(open('data/distribucion.json',encoding='utf-8'))['house']
     # Inicialización
     agentes_tempranos = 0
-    heapq.heappush(eventos, Evento("person_arrival", 66, Agente(-1, grafo.get_parada('2773'), grafo.get_parada('3449'),True)))
+    # heapq.heappush(eventos, Evento("person_arrival", 66, Agente(-1, grafo.get_parada('2773'), grafo.get_parada('3449'),True)))
     t = sum(houses.values())
     for i in distribucion["Municipio de Residencia"]:
         for j in range(houses[i]//(t//num_agentes)):
@@ -150,10 +150,11 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
             Un agente llega a una parada y decide qué guagua tomar.
             """
             agente = evento.args
-            if(len(agente.intenciones)==0):
+            if 'salir de casa' in agente.intenciones or 'salir del trabajo' in agente.intenciones:
                 agente.elegir_ruta(grafo)
                 agente.cursor_parada=0
                 agente.cursor_ruta=1
+                agente.actualizar_creencias(current_time,evento)
             else:
                 if agente.repite:
                     agente.repite=False
@@ -173,44 +174,22 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                         tiempo_regreso = agente.tiempo_regreso
                         evento = Evento('person_arrival',tiempo_regreso,agente)
                         heapq.heappush(eventos,evento)
-                continue
-            if(len(agente.intenciones)<2):
-                continue
-
-            # print(f"Agente {agente.id} llegó{' a pie' if agente.intenciones[1][1] == 'pie' else ''} a la parada {agente.creencias['parada_actual']}")
-            proxima_guagua = agente.proxima_guagua()  # Asumiendo que intenciones[1] es (parada, guagua)
-
-            if proxima_guagua == "pie":
-                # Cuando tiene que ir para la proxima parada a pie
-                tiempo = agente.mueve_parada()
-                #Creamos el evento de llegada a la proxima parada
-                evento_person_arrival = Evento("person_arrival", current_time+tiempo, agente)
-                #Lo agregamos al heap
-                heapq.heappush(eventos, evento_person_arrival)
-                continue
-
-            if proxima_guagua not in agente.parada_actual().colas:
-                agente.parada_actual().colas[proxima_guagua]=[]
-            agente.parada_actual().colas[proxima_guagua].append(agente)
-            tiempo_impaciencia = agente.recalcula_impaciencia(current_time)
-            evento = Evento('impaciencia',current_time+tiempo_impaciencia,(agente,agente.parada_actual()))
-            heapq.heappush(eventos,evento)
-        
-        elif evento.event_name=="impaciencia":
-            agente, parada = evento.args
-            if agente.in_guagua or parada != agente.creencias['parada_actual'] or current_time!= agente.tiempo_impaciencia:
-                continue
-            tiempo_llegada = agente.impaciente()
-            #Regresa a la casa
-            if "regresa a casa" in agente.deseos:
-                agentes_regresan_impaciencia +=1
-            if "ir en carro" in agente.deseos:
-                agentes_carro+=1
             else:
-                #Caminando
-                agentes_caimando+=1
-            evento_destino = Evento("person_arrival", current_time + tiempo_llegada, agente)
-            heapq.heappush(eventos, evento_destino)
+                # print(f"Agente {agente.id} llegó{' a pie' if agente.intenciones[1][1] == 'pie' else ''} a la parada {agente.creencias['parada_actual']}")
+                proxima_guagua = agente.proxima_guagua()  # Asumiendo que intenciones[1] es (parada, guagua)
+
+                if proxima_guagua == "pie":
+                    # Cuando tiene que ir para la proxima parada a pie
+                    tiempo = agente.mueve_parada()
+                    #Creamos el evento de llegada a la proxima parada
+                    evento_person_arrival = Evento("person_arrival", current_time+tiempo, agente)
+                    #Lo agregamos al heap
+                    heapq.heappush(eventos, evento_person_arrival)
+                else:
+                    if proxima_guagua not in agente.parada_actual().colas:
+                        agente.parada_actual().colas[proxima_guagua]=[]
+                    agente.parada_actual().colas[proxima_guagua].append(agente)
+                    agente.recalcula_impaciencia(current_time)
 
         elif evento.event_name == "init_bus":
             """
@@ -272,18 +251,6 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                 pasajero.tiempo_impaciencia =-1
                 pasajero.in_guagua = True
                 guagua.pasajeros.append(pasajero)
-            
-            #Si la guagua tiene capacidad el resto de los pasajeros en la parada se lo piensa
-            if guagua.has_capacity() and guagua.position < len(guagua.ruta) - 1:
-                for cola in parada_actual.colas.values():
-                    for pasajero in cola:
-                        if not guagua.has_capacity():
-                            break
-                        if pasajero.piensa_cambiar_ruta(grafo,guagua):
-                            pasajero.tiempo_impaciencia =-1
-                            pasajero.in_guagua =True
-                            guagua.pasajeros.append(pasajero)
-                            cola.remove(pasajero)
 
             guagua.position += 1
             if guagua.position < len(guagua.ruta):
@@ -305,6 +272,11 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                 municipios[agente.parada_actual().county] +=1
 
             datos_simulacion[current_time] = municipios
+        
+        for agente in agentes:
+            ev =  agente.actualizar_creencias(current_time,evento,grafo)
+            if ev:
+                heapq.heappush(eventos,ev)
             
     with open('output.csv', 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
