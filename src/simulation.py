@@ -154,7 +154,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                 agente.elegir_ruta(grafo)
                 agente.cursor_parada=0
                 agente.cursor_ruta=1
-                agente.actualizar_creencias(current_time,evento)
+                agente.actualizar_creencias(current_time,evento,grafo)
             else:
                 if agente.repite:
                     agente.repite=False
@@ -276,7 +276,8 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
         for agente in agentes:
             ev =  agente.actualizar_creencias(current_time,evento,grafo)
             if ev:
-                heapq.heappush(eventos,ev)
+                heapq.heappush(eventos,Evento(ev[0],ev[1],ev[2]))
+        print(current_time,end='\r')
             
     with open('output.csv', 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
