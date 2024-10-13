@@ -1,1 +1,6 @@
 haversine
+pandas
+geopandas
+google-generativeai
+folium
+numpy
