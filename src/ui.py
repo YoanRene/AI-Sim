@@ -7,21 +7,22 @@ from folium import Choropleth, LayerControl, Marker, FeatureGroup
 geojson_path = "data/lha.geojson"  # Asegúrate de tener el archivo GeoJSON
 gdf = gpd.read_file(geojson_path)
 
-# Crear un DataFrame con los valores para diferentes horas del día
-data = {
-    "municipio": ["Playa", "Plaza de la Revolución", "Centro Habana", "La Habana Vieja", "Regla", "Marianao",
-                  "Habana del Este", "Guanabacoa", "San Miguel del Padrón", "Arroyo Naranjo", 
-                  "Diez de Octubre", "Cerro", "Boyeros", "La Lisa", "Cotorro"],
-    "8am": [10, 12, 8, 5, 3, 10, 11, 8, 12, 15, 11, 6, 16, 8, 4],
-    "12pm": [15, 14, 10, 6, 4, 12, 13, 10, 14, 18, 13, 7, 19, 10, 5],
-    "4pm": [19, 14, 13, 7, 4, 13, 15, 12, 15, 19, 14, 9, 21, 12, 7],
-    "8pm": [12, 10, 8, 5, 3, 9, 10, 8, 11, 14, 10, 6, 17, 9, 4]
-}
+# Cargar los datos del CSV
+df_csv = pd.read_csv("output.csv")
 
-df = pd.DataFrame(data)
+# Renombrar los municipios para que coincidan con los del GeoJSON
+df_csv = df_csv.rename(columns={
+    "Revolution Square": "Plaza de la Revolución"
+})
 
-# Unir el DataFrame con el GeoDataFrame del GeoJSON basado en el nombre del municipio
-gdf = gdf.merge(df, left_on="municipality", right_on="municipio", how="left")
+# Transponer el DataFrame para que las horas sean columnas y los municipios sean índices
+df_csv = df_csv.set_index("Hora").T
+
+# Crear un GeoDataFrame con los municipios de La Habana y unir los datos del CSV
+gdf = gdf.merge(df_csv, left_on="municipality", right_index=True, how="left")
+
+min_val = df_csv.min().min()  # Valor mínimo de todas las horas
+max_val = df_csv.max().max()  # Valor máximo de todas las horas
 
 # Crear el mapa base centrado en La Habana
 mapa = folium.Map(location=[23.1136, -82.3666], zoom_start=11)
@@ -32,24 +33,37 @@ folium.TileLayer('openstreetmap').add_to(mapa)
 def agregar_capa(mapa, hora, color):
     Choropleth(
         geo_data=gdf,
-        name=hora,
+        name=f"{hora} min",
         data=gdf,
-        columns=["municipio", hora],
+        columns=["municipality", hora],
         key_on="feature.properties.municipality",  # Asegúrate de que coincida con tu GeoJSON
         fill_color=color,
         fill_opacity=0.7,
         line_opacity=1,
-        legend_name=f"Intensidad del valor por municipio ({hora})",
+        legend_name=None,
+         threshold_scale=[min_val, 
+                         max_val * 0.2, 
+                         max_val * 0.4, 
+                         max_val * 0.6, 
+                         max_val * 0.8, 
+                         max_val],  # Escala uniforme,
         control=True,
         show=False,
         overlay=False
     ).add_to(mapa)
 
-# Agregar capas para diferentes horas
-agregar_capa(mapa, "8am", "YlOrRd")
-agregar_capa(mapa, "12pm", "YlOrRd")
-agregar_capa(mapa, "4pm", "YlOrRd")
-agregar_capa(mapa, "8pm", "YlOrRd")
+# Agregar capas para las diferentes horas
+horas = df_csv.columns  # Usar las horas del CSV como columnas
+cc=0
+for hora in horas:
+    agregar_capa(mapa, hora, "YlOrRd")
+
+# Ocultar la leyenda de Choropleth
+mapa.get_root().header.add_child(folium.Element("""
+    <style>
+        .legend { display: none; }
+    </style>
+"""))
 
 # Leer el archivo CSV de paradas
 df_paradas = pd.read_csv("data/listaparadas.csv")
@@ -59,7 +73,7 @@ df_rutas = pd.read_csv("data/paradasruta.csv")
 
 # Función para agregar las paradas como marcadores en una capa
 def agregar_paradas(mapa, df_paradas):
-    paradas_fg = FeatureGroup(name="Paradas", overlay=True, show=True)
+    paradas_fg = FeatureGroup(name="Paradas", overlay=True, show=False)
     for index, row in df_paradas.iterrows():
         Marker(
             location=[row['Y'], row['X']],
@@ -121,6 +135,27 @@ for idruta in df_rutas['idruta'].unique():
 # Agregar paradas y rutas al mapa
 agregar_paradas(mapa, df_paradas)
 agregar_rutas(mapa, df_rutas, df_paradas)
+
+# Crear una función para agregar una leyenda personalizada
+def agregar_leyenda(mapa, min_val, max_val):
+    legend_html = f"""
+    <div style="position: fixed; 
+                bottom: 50px; left: 50px; width: 150px; height: 200px; 
+                background-color: white; z-index:9999; font-size:14px;
+                border:2px solid grey; padding: 10px;">
+    <h4 style='margin-top:0;'>Cantidad de Personas</h4>
+    <i style="background: #ffffb2; width: 20px; height: 10px; display: inline-block;"></i> {min_val}<br>
+    <i style="background: #fed976; width: 20px; height: 10px; display: inline-block;"></i> {int(min_val + (max_val - min_val) * 0.2)}<br>
+    <i style="background: #feb24c; width: 20px; height: 10px; display: inline-block;"></i> {int(min_val + (max_val - min_val) * 0.4)}<br>
+    <i style="background: #fd8d3c; width: 20px; height: 10px; display: inline-block;"></i> {int(min_val + (max_val - min_val) * 0.6)}<br>
+    <i style="background: #f03b20; width: 20px; height: 10px; display: inline-block;"></i> {int(min_val + (max_val - min_val) * 0.8)}<br>
+    <i style="background: #bd0026; width: 20px; height: 10px; display: inline-block;"></i> {max_val}
+    </div>
+    """
+    mapa.get_root().html.add_child(folium.Element(legend_html))
+
+# Agregar la leyenda personalizada al mapa
+agregar_leyenda(mapa, min_val, max_val)
 
 # Agregar control de capas para alternar entre las horas, rutas y paradas
 LayerControl(position='topright').add_to(mapa)
