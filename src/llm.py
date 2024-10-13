@@ -206,6 +206,15 @@ La siguiente tabla muestra la distribucion de personas por municipios durante la
 La simulacion empieza a las 6am y termina a las 6am del dia anterior, los tiempos son en minutos,
 es decir, 60 seria que paso una hora de simulacion, por tanto serian las 7am.
 
+La simulacion empieza a las 6 de la manana
+6am => 0
+9am => 180
+11am => 300
+3pm => 540
+5pm => 660
+9pm => 900
+6am => 1,440
+
 """+resultados+"""
 
 Dale una respuesta al usuario teniendo en cuenta esos datos
