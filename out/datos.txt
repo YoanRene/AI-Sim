@@ -1,0 +1,61 @@
+Agentes que llegaron al trabajo: 4925
+Agentes que regresaron a la casa: 3427
+Agentes que salieron para el trabajo antes de las 9pm: 4758
+Viajes Completados: 10323
+Destinos Completados: 4925
+Agentes que regresaron a la casa sin llegar al trabajo: 0
+Agentes que se van en carro: 0
+Agentes que se van caminando: 0
+Personas rechazadas por buses llenos: 29010
+Ruta P1: 95 guaguas salieron
+Ruta P1: 1493 personas fueron transportadas
+Ruta P1: Promedio de llenado: 31.45%
+Ruta P2: 140 guaguas salieron
+Ruta P2: 1399 personas fueron transportadas
+Ruta P2: Promedio de llenado: 17.71%
+Ruta P7: 61 guaguas salieron
+Ruta P7: 295 personas fueron transportadas
+Ruta P7: Promedio de llenado: 8.86%
+Ruta P9: 79 guaguas salieron
+Ruta P9: 1322 personas fueron transportadas
+Ruta P9: Promedio de llenado: 26.63%
+Ruta P10: 120 guaguas salieron
+Ruta P10: 898 personas fueron transportadas
+Ruta P10: Promedio de llenado: 13.65%
+Ruta P12: 49 guaguas salieron
+Ruta P12: 1154 personas fueron transportadas
+Ruta P12: Promedio de llenado: 51.48%
+Ruta P13: 39 guaguas salieron
+Ruta P13: 984 personas fueron transportadas
+Ruta P13: Promedio de llenado: 44.90%
+Ruta P16: 64 guaguas salieron
+Ruta P16: 554 personas fueron transportadas
+Ruta P16: Promedio de llenado: 11.82%
+Ruta P3: 94 guaguas salieron
+Ruta P3: 1530 personas fueron transportadas
+Ruta P3: Promedio de llenado: 32.70%
+Ruta P11: 136 guaguas salieron
+Ruta P11: 947 personas fueron transportadas
+Ruta P11: Promedio de llenado: 16.23%
+Ruta P4: 53 guaguas salieron
+Ruta P4: 1101 personas fueron transportadas
+Ruta P4: Promedio de llenado: 40.44%
+Ruta P5: 48 guaguas salieron
+Ruta P5: 862 personas fueron transportadas
+Ruta P5: Promedio de llenado: 30.19%
+Ruta P14: 40 guaguas salieron
+Ruta P14: 877 personas fueron transportadas
+Ruta P14: Promedio de llenado: 40.91%
+Ruta P6: 60 guaguas salieron
+Ruta P6: 421 personas fueron transportadas
+Ruta P6: Promedio de llenado: 17.33%
+Ruta P8: 80 guaguas salieron
+Ruta P8: 237 personas fueron transportadas
+Ruta P8: Promedio de llenado: 4.90%
+Ruta PC: 105 guaguas salieron
+Ruta PC: 1496 personas fueron transportadas
+Ruta PC: Promedio de llenado: 25.18%
+Ruta P15: 89 guaguas salieron
+Ruta P15: 687 personas fueron transportadas
+Ruta P15: Promedio de llenado: 16.89%
+Tiempo Promedio de viaje: 201.500135249108
