@@ -42,7 +42,7 @@ This project proposal for the Artificial Intelligence and Simulation courses aim
 Esta propuesta de proyecto para las asignaturas de Inteligencia Artificial y Simulación tiene como objetivo desarrollar un generador de trayectorias de movilidad para La Habana. El generador simulará el movimiento de los habitantes de la capital, considerando principalmente las redes de ómnibus. El objetivo principal es estimar la cantidad de habitantes que se encuentran en cada municipio de la capital durante las 24 horas de un día.
 \end{abstract}
 
-
+\newpage
 \tableofcontents
 \newpage
 % Sección de Introducción
@@ -174,12 +174,47 @@ La simulación se organiza en torno a una cola de prioridad (\textit{heap}) de e
 \end{itemize}
 
 \subsubsection{Interacción de los Agentes con el Entorno}
-En cada evento, los agentes actualizan sus creencias e intenciones basándose en la información disponible en el entorno.  Ver la secci\'on \ref{sec:defagente}.
+En cada evento, los agentes actualizan sus creencias e intenciones basándose en la información disponible en el entorno tal como se describe en la secci\'on \ref{sec:defagente}.
 
 \subsubsection{Eventos Clave en la Simulación}
 El flujo de la simulación depende del desencadenamiento de los eventos y las decisiones de los agentes. Los eventos se procesan en orden cronológico, lo que permite que la simulación avance de manera dinámica. El entorno, representado por un grafo de conexiones de rutas de guaguas, proporciona el contexto para las acciones de los agentes. La interacción de los agentes con este grafo y con las guaguas es fundamental para el éxito de sus trayectorias.
 
 A medida que los agentes completan sus trayectos o regresan a sus puntos de origen, el sistema de eventos sigue generando nuevas acciones, asegurando que la simulación capture la complejidad de la movilidad en un entorno urbano dinámico.
+
+\subsection{Uso de Modelos de Lenguaje para la Configuración y Ejecución de la Simulaci\'on}
+
+En el desarrollo de la simulación de movilidad humana para la ciudad de La Habana, se ha implementado un enfoque que integra modelos de lenguaje avanzados (LLMs, por sus siglas en inglés) para automatizar tanto la configuración como la ejecución de la simulación \cite{llm_overview}. Este enfoque permite a los usuarios interactuar con el sistema mediante lenguaje natural, facilitando el proceso de configuración y la posterior interpretación de los resultados generados por la simulación.
+
+\subsubsection{Generación y Ejecución de la Simulación}
+
+El modelo de lenguaje utilizado, \textit{Gemini-1.5 Flash} \cite{gemini_model}, ha sido integrado al sistema mediante una API, permitiendo que, a partir de una entrada textual del usuario, se genere un archivo de configuración en formato JSON que contiene los parámetros clave para la simulación. Estos parámetros incluyen:
+
+\begin{itemize}
+    \item Cantidad de ómnibus.
+    \item Tiempo total de simulación.
+    \item Número de agentes.
+    \item Archivos de distribución de población y trabajos por municipio.
+    \item Frecuencias de salida de las rutas de transporte.
+    \item Probabilidades de retorno a los hogares.
+    \item Intervalos de partida de los agentes.
+\end{itemize}
+
+Tras la generación del archivo JSON, el sistema procede a ejecutar automáticamente la simulación utilizando los parámetros establecidos por el modelo de lenguaje. La ejecución se realiza sin intervención adicional del usuario, permitiendo que el proceso sea ágil y eficiente.
+
+\subsubsection{Análisis de los Resultados}
+
+Al finalizar la simulación, el LLM no solo proporciona los resultados brutos generados, sino que además realiza un análisis detallado de los mismos. Los resultados de la simulación, que se guardan en archivos CSV, son procesados y formateados para su presentación de manera comprensible. A través del modelo de lenguaje, el usuario puede recibir un análisis estadístico completo de los datos, acompañado de gráficos generados automáticamente para facilitar la visualización de las dinámicas de movilidad. Estos gráficos incluyen la distribución de personas por municipio a lo largo del día, reflejando el impacto de las diferentes configuraciones de transporte y comportamiento de los agentes.
+
+Un ejemplo típico de interacción con el LLM puede incluir preguntas como: \textit{“¿Qué sucede si solo está disponible la ruta P11?”} o \textit{“¿Cómo afectaría a la población de Habana del Este la falta de guaguas en la ruta P1?”}. El LLM ajusta los parámetros de la simulación según la consulta, ejecuta la simulación y presenta un análisis exhaustivo de los resultados, considerando las condiciones impuestas por el usuario.
+
+\subsubsection{Ventajas del Uso de LLMs en la Simulación}
+\begin{itemize}
+    \item Automatización integral del proceso de configuración, ejecución y análisis de simulaciones.
+    \item Reducción significativa de la complejidad para los usuarios, permitiendo interactuar mediante lenguaje natural sin necesidad de conocimientos técnicos detallados.
+    \item Capacidad de personalizar dinámicamente la simulación en respuesta a preguntas o hipótesis específicas planteadas por el usuario.
+    \item Generación automática de informes estadísticos y gráficos que facilitan la interpretación de los resultados.
+\end{itemize}
+
 
 
 
