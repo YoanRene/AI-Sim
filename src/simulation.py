@@ -300,6 +300,17 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
     print(" Agentes que se van en carro:",agentes_carro)
     print(" Agentes que se van caminando:",agentes_caimando)
 
+    # Guardar datos de la simulación en un archivo
+    with open("out/datos.txt", "w") as f:
+        f.write(f"Agentes que llegaron al trabajo: {agentes_llegan_trabajo}\n")
+        f.write(f"Agentes que regresaron a la casa: {agentes_regresan_casa}\n")
+        f.write(f"Agentes que salieron para el trabajo antes de las 9pm: {agentes_tempranos}\n")
+        f.write(f"Viajes Completados: {agentes_destino}\n")
+        f.write(f"Destinos Completados: {agente_bien}\n")
+        f.write(f"Agentes que regresaron a la casa sin llegar al trabajo: {agentes_regresan_impaciencia}\n")
+        f.write(f"Agentes que se van en carro: {agentes_carro}\n")
+        f.write(f"Agentes que se van caminando: {agentes_caimando}\n")
+
     time_of_travel = 0
     municipios = {}
     for agente in agentes:
