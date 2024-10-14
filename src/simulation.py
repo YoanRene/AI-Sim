@@ -60,7 +60,7 @@ class Guagua:
         self.pasajeros = []
 
     def has_capacity(self):
-        return BUS_CAPACITY  # Assuming a capacity of 50
+        return len(self.pasajeros) < BUS_CAPACITY  # Assuming a capacity of 50
 
 def simulacion(grafo, num_agentes, tiempo_max, config):
     """
@@ -108,8 +108,12 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
             evento = Evento("person_arrival", time_get_out, agente)
             heapq.heappush(eventos, evento)
     # Inicializar guaguas
+    guaguas_por_ruta = {}
+    personas_transportadas_por_ruta = {}
     for ruta in grafo.rutas:
         ruta_id = ruta[0][2] # Obtener el ID de la ruta
+        guaguas_por_ruta[ruta_id] = 0
+        personas_transportadas_por_ruta[ruta_id] = 0
         frequency = BUS_FREQUENCIES.get(ruta_id, (15, 60)) # Obtener la frecuencia o usar el valor por defecto (15, 60)
         if len(frequency)==1:
             new_guagua = Evento(
@@ -132,6 +136,9 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
     agentes_carro = 0
     agentes_caimando = 0
     
+    personas_rechazadas_por_lleno = 0
+    promedio_llenado_rutas = {}
+
     # Crear un diccionario para almacenar los datos de la simulación
     datos_simulacion = {}
 
@@ -201,6 +208,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
             guagua = Guagua(ruta[0][1],ruta)
             evento_siguiente = Evento("next_stop", current_time, guagua)
             heapq.heappush(eventos, evento_siguiente)
+            guaguas_por_ruta[ruta[0][2]] += 1  # Incrementa el contador de guaguas por ruta
             if len(frequency)==1:
                 new_guagua = Evento(
                 "init_bus", current_time + frequency[0], (ruta,frequency)
@@ -219,6 +227,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
             parada_actual = guagua.ruta[guagua.position][0]
             if(not parada_actual):
                 continue
+            ruta_id = guagua.ruta[0][2]  # Obtener el ID de la ruta
             # Bajar pasajeros
             for pasajero in guagua.pasajeros:
                 pasajero.mueve_parada(parada_actual)
@@ -236,7 +245,6 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                         if pasajero.regreso_a_casa():
                             agentes_regresan_casa+=1
                         else:
-                            agentes_llegan_trabajo +=1
                             pasajero.llegada = current_time
                             if pasajero.regresa:
                                 evento = Evento('person_arrival',current_time,pasajero)
@@ -251,6 +259,17 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                 pasajero.tiempo_impaciencia =-1
                 pasajero.in_guagua = True
                 guagua.pasajeros.append(pasajero)
+                personas_transportadas_por_ruta[ruta_id] += 1  # Incrementa el contador de personas por ruta
+
+            # Controlar si alguien se queda en la parada porque el bus está lleno
+            if (guagua.id in parada_actual.colas) and len(parada_actual.colas[guagua.id])>0 and guagua.position < len(guagua.ruta) - 1:
+                personas_rechazadas_por_lleno += len(parada_actual.colas[guagua.id])
+
+            # Calcular el porcentaje de llenado del bus
+            porcentaje_llenado = len(guagua.pasajeros) / BUS_CAPACITY * 100
+            if ruta_id not in promedio_llenado_rutas:
+                promedio_llenado_rutas[ruta_id] = []
+            promedio_llenado_rutas[ruta_id].append(porcentaje_llenado)
 
             guagua.position += 1
             if guagua.position < len(guagua.ruta):
@@ -299,6 +318,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
     print(" Agentes que regresaron a la casa sin llegar al trabajo:",agentes_regresan_impaciencia)
     print(" Agentes que se van en carro:",agentes_carro)
     print(" Agentes que se van caminando:",agentes_caimando)
+    print(" Personas rechazadas por buses llenos:", personas_rechazadas_por_lleno)
 
     # Guardar datos de la simulación en un archivo
     with open("out/datos.txt", "w") as f:
@@ -310,17 +330,27 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
         f.write(f"Agentes que regresaron a la casa sin llegar al trabajo: {agentes_regresan_impaciencia}\n")
         f.write(f"Agentes que se van en carro: {agentes_carro}\n")
         f.write(f"Agentes que se van caminando: {agentes_caimando}\n")
+        f.write(f"Personas rechazadas por buses llenos: {personas_rechazadas_por_lleno}\n")
 
-    time_of_travel = 0
-    municipios = {}
-    for agente in agentes:
-        if agente.en_destino():
-            time_of_travel += agente.llegada-agente.salida
-            if agente.creencias['parada_actual'].county not in municipios:
-                municipios[agente.creencias['parada_actual'].county] = 0
-            municipios[agente.creencias['parada_actual'].county] +=1
+        # Imprimir estadísticas de las rutas
+        for ruta_id, cantidad_guaguas in guaguas_por_ruta.items():
+            f.write(f"Ruta {ruta_id}: {cantidad_guaguas} guaguas salieron\n")
+            f.write(f"Ruta {ruta_id}: {personas_transportadas_por_ruta[ruta_id]} personas fueron transportadas\n")
+            if ruta_id in promedio_llenado_rutas:
+                promedio_llenado = np.mean(promedio_llenado_rutas[ruta_id])
+                f.write(f"Ruta {ruta_id}: Promedio de llenado: {promedio_llenado:.2f}%\n")
 
-    print(f'\nTiempo Promedio de viaje: {time_of_travel/agentes_llegan_trabajo}\n')
+        time_of_travel = 0
+        municipios = {}
+        for agente in agentes:
+            if agente.en_destino():
+                time_of_travel += agente.llegada-agente.salida
+                if agente.creencias['parada_actual'].county not in municipios:
+                    municipios[agente.creencias['parada_actual'].county] = 0
+                municipios[agente.creencias['parada_actual'].county] +=1
+
+        print(f'\nTiempo Promedio de viaje: {time_of_travel/agentes_llegan_trabajo}\n')
+        f.write(f'Tiempo Promedio de viaje: {time_of_travel/agentes_llegan_trabajo}\n')
     for k,v in municipios.items():
         print(f'Municipio {k} tiene {municipios_inicio[k] if k in municipios_inicio else 0} agentes al pricipio y {v} al final')
     for parada in grafo.vertices.values():
