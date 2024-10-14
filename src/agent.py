@@ -220,7 +220,7 @@ class Agente:
         # if tiempo_promedio_ruta(self.creencias['ruta_actual'][self.cursor_ruta-1:])+self.creencias['current_time']>=self.creencias['horario_llegada']:
         #     if 'llegar_temprano' in self.deseos:
         #         self.intenciones = ['coger carro']
-        if self.tiempo_impaciencia!=-1 and self.creencias["current_time"] >= self.tiempo_impaciencia:
+        if self.tiempo_impaciencia!=-1 and self.creencias["current_time"] >= self.tiempo_impaciencia and self.preferencias['paciencia']<-1:
             if not self.in_guagua:
                 t = self.impaciente()
                 return ('person_arrival',current_time+ t , self)
