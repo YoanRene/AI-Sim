@@ -48,4 +48,4 @@ def eliminar_codigo(archivo):
 start_llm()
 # Llama a la función para eliminar el código
 eliminar_codigo('out/informe.md')
-render_markdown("out/informe.md", "informe.html")
+render_markdown("out/informe.md", "out/informe.html")
