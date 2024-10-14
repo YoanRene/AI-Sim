@@ -9,6 +9,7 @@ import json
 import numpy as np
 import pandas as pd
 import csv
+import os
 
 # Cargar configuración desde JSON
 def cargar_configuracion(filepath):
@@ -62,7 +63,7 @@ class Guagua:
     def has_capacity(self):
         return len(self.pasajeros) < BUS_CAPACITY  # Assuming a capacity of 50
 
-def simulacion(grafo, num_agentes, tiempo_max, config):
+def simulacion(grafo, num_agentes, tiempo_max, config, output_dir="out"):
     """
     Simula un sistema de transporte público con agentes que viajan en guaguas
     entre paradas.
@@ -77,7 +78,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
     BUS_CAPACITY, SIMULATION_TIME, NUM_AGENTS, DISTRIBUTION_FILE, HOUSES_FILE, OUTPUT_INTERVAL, RETURN_PROBABILITY, DEPARTURE_INTERVALS, DEPARTURE_WEIGHTS, BUS_FREQUENCIES = get_config_values(config)
     eventos = []
     current_time = 0
-
+    os.makedirs(output_dir, exist_ok=True)
     print(f"Iniciando simulación con {num_agentes} agentes durante {tiempo_max} segundos")
     agentes = []
     municipios_inicio= {}
@@ -298,7 +299,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                 heapq.heappush(eventos,Evento(ev[0],ev[1],ev[2]))
         print(current_time,end='\r')
             
-    with open('out/output.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    with open(os.path.join(output_dir, 'output.csv'), 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         # Obtener la lista de municipios de los datos iniciales (o de cualquier hora en datos_simulacion)
         municipios = list(municipios_inicio.keys())
@@ -321,7 +322,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
     print(" Personas rechazadas por buses llenos:", personas_rechazadas_por_lleno)
 
     # Guardar datos de la simulación en un archivo
-    with open("out/datos.txt", "w") as f:
+    with open(os.path.join(output_dir, "datos.txt"), "w") as f:
         f.write(f"Agentes que llegaron al trabajo: {agentes_llegan_trabajo}\n")
         f.write(f"Agentes que regresaron a la casa: {agentes_regresan_casa}\n")
         f.write(f"Agentes que salieron para el trabajo antes de las 9pm: {agentes_tempranos}\n")
@@ -357,7 +358,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
         personas_en_cola = sum(len(colas) for colas in parada.colas.values())
         if personas_en_cola>0:
             print(f"Parada {parada} tiene {personas_en_cola} personas en cola")
-def start_simulation(config_filepath):
+def start_simulation(config_filepath, output_dir="out"):
     # Cargar configuración desde el archivo JSON
     config = cargar_configuracion(config_filepath)
 
@@ -366,7 +367,7 @@ def start_simulation(config_filepath):
     cargar_datos(grafo)
 
     # Iniciar la simulación
-    simulacion(grafo, num_agentes=config["num_agents"], tiempo_max=config["simulation_time"], config=config)
+    simulacion(grafo, num_agentes=config["num_agents"], tiempo_max=config["simulation_time"], config=config,output_dir=output_dir)
 # Uso en la simulación
 if __name__ == '__main__':
     start_simulation("data/config.json")  # Simular utilizando el archivo "config.json"
