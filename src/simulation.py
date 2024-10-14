@@ -81,8 +81,8 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
     print(f"Iniciando simulación con {num_agentes} agentes durante {tiempo_max} segundos")
     agentes = []
     municipios_inicio= {}
-    distribucion = cargar_distribucion('data/distribucion.csv')
-    houses = json.load(open('data/distribucion.json',encoding='utf-8'))['house']
+    distribucion = cargar_distribucion('data/distribucion_trabajo.csv')
+    houses = json.load(open('data/distribucion_poblacion.json',encoding='utf-8'))['house']
     # Inicialización
     agentes_tempranos = 0
     # heapq.heappush(eventos, Evento("person_arrival", 66, Agente(-1, grafo.get_parada('2773'), grafo.get_parada('3449'),True)))
@@ -279,7 +279,7 @@ def simulacion(grafo, num_agentes, tiempo_max, config):
                 heapq.heappush(eventos,Evento(ev[0],ev[1],ev[2]))
         print(current_time,end='\r')
             
-    with open('output.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    with open('out/output.csv', 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         # Obtener la lista de municipios de los datos iniciales (o de cualquier hora en datos_simulacion)
         municipios = list(municipios_inicio.keys())
@@ -328,4 +328,4 @@ def start_simulation(config_filepath):
     simulacion(grafo, num_agentes=config["num_agents"], tiempo_max=config["simulation_time"], config=config)
 # Uso en la simulación
 if __name__ == '__main__':
-    start_simulation("src/config.json")  # Simular utilizando el archivo "config.json"
+    start_simulation("data/config.json")  # Simular utilizando el archivo "config.json"

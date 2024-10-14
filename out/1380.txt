@@ -1,9 +1,0 @@
-Playa,3
-Revolution Square,1
-Centro Habana,2
-Habana del Este,1
-San Miguel del Padrón,1
-Diez de Octubre,1
-Cerro,1
-Boyeros,1
-Arroyo Naranjo,1

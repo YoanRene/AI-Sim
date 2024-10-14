@@ -1,9 +1,0 @@
-Playa,2
-La Habana Vieja,1
-Habana del Este,2
-San Miguel del Padrón,1
-Cerro,1
-Revolution Square,1
-Marianao,2
-Boyeros,1
-Cotorro,1
