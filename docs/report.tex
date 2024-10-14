@@ -8,6 +8,8 @@
 \usepackage{hyperref}
 \usepackage{float}
 \usepackage[numbers]{natbib}
+\usepackage{multicol}
+
 
 
 % Configuración de márgenes
@@ -20,7 +22,7 @@
 
 % Información del documento
 \title{Proyecto de IA-Simulaci\'on\\\textit{Tema: Movilidad Humana en La Habana}}
-\author{Yoan Ren\'e Ramos Corrales \newline \and David Cabrera Garc\'ia}
+\author{Yoan Ren\'e Ramos Corrales  C-412  \and  David Cabrera Garc\'ia  C-411}
 
 
 
@@ -43,7 +45,6 @@ Esta propuesta de proyecto para las asignaturas de Inteligencia Artificial y Sim
 
 \tableofcontents
 \newpage
-
 % Sección de Introducción
 \section{Introducción}
 Los estudios sobre la movilidad humana se enfocan en describir cómo las personas se desplazan dentro de un sistema o red. El análisis y la predicción de estos movimientos tienen aplicaciones en diversas áreas, como la propagación de enfermedades, la planificación urbana, la ingeniería del tráfico y los mercados financieros, entre otras. En el caso de enfermedades infecciosas como la COVID-19, se sabe que la movilidad humana es un factor clave para su propagación.
@@ -54,29 +55,133 @@ Atendiendo a lo anterior se propone entonces la creaci\'on de un modelo capaz de
 
 % Sección de Metodología
 \section{Metodología}
-La metodología adoptada en este proyecto se fundamenta en la modelación de la red de transporte público de La Habana como un \textbf{multigrafo} \( G = (V, E) \), donde los \textbf{vértices} \( V \) representan las paradas de transporte público y las \textbf{aristas} \( E \subseteq V \times V \) corresponden a las conexiones entre estas paradas a lo largo de rutas determinadas. En este contexto, cada vértice \( v \in V \) corresponde a una parada física del transporte público, mientras que cada arista \( e_{ij} \in E \) conecta dos vértices \( v_i \) y \( v_j \), permitiendo modelar las múltiples opciones de conexión entre dichas paradas a través de diferentes rutas.
+\subsection{Preliminares}
+Nuestra simulación se basa en un \textbf{modelo de eventos discretos}, que captura los cambios de estado en momentos específicos del tiempo. El sistema está diseñado bajo un enfoque de \textbf{sistemas basados en agentes}, donde el \textbf{medio ambiente} es la red de transporte público de La Habana, y los \textbf{agentes} son pasajeros que interactúan con dicho medio.
 
-Las aristas \( e_{ij} \) pueden ser etiquetadas con rutas de transporte público específicas, \( r_k \), de tal manera que \( e_{ij}^{(r_k)} \) indica que la arista conecta \( v_i \) y \( v_j \) a través de la ruta \( r_k \). Estas rutas solo incluyen los sistemas de autobuses principales (e.g., P12) capturando así las diversas alternativas de transporte entre dos paradas específicas.
+\subsection{Definci\'on del Medio Ambiente}
 
-Los \textbf{agentes}, que representan a las personas, son modelados bajo la arquitectura \textbf{BDI} (Belief-Desire-Intention). Formalmente, cada agente \( a \in A \), donde \( A \) es el conjunto de todos los agentes, está caracterizado por un conjunto de \textbf{creencias} \( B_a \), que representan su conocimiento del entorno, un conjunto de \textbf{deseos} \( D_a \), que incluye sus objetivos o metas, y un conjunto de \textbf{intenciones} \( I_a \), que definen las acciones que el agente toma para cumplir con sus deseos.
+El medio ambiente en el que operan los agentes está sobre un \textbf{multigrafo} $G = (V, E, \rho, w)$ que modela la red de transporte público de La Habana. El multigrafo se define de la siguiente manera:
 
-Cada agente \( a \) tiene preferencias \( P_a \), que influyen en su decisión de selección de rutas y medios de transporte. Estas preferencias se modelan como una función de utilidad \( u_a : E \times P_a \rightarrow \mathbb{R} \), donde el agente elige la ruta que maximiza su utilidad. La función de utilidad puede depender de varios factores, tales como:
+\begin{itemize}
+    \item $V = \{v_1, v_2, \dots, v_n\}$ es el conjunto de vértices que representan las \textbf{paradas de transporte público}.
+    \item $E = \{e_1, e_2, \dots, e_m\}$ es el conjunto de aristas, donde cada arista $e \in E$ representa una \textbf{conexión directa} entre dos paradas a través de una ruta específica.
+    \item $\rho: E \rightarrow R$ es una función que asigna a cada arista una ruta específica $\rho_i \in R$, donde $R$ es el conjunto de rutas disponibles en la red de transporte.
+    \item $w: E \rightarrow \mathbb{R}^+$ es una función de peso que asigna una distancia a cada arista, representando la \textbf{distancia} entre las paradas por una ruta específica.
+\end{itemize}.
 
-\[
-u_a(e_{ij}^{(r_k)}) = f(T_{ij}, C_{ij}, \Delta t, p_a)
-\]
+\subsubsection{Características del Medio Ambiente}
 
-donde \( T_{ij} \) es el tiempo de viaje entre \( v_i \) y \( v_j \), \( C_{ij} \) es el costo del transporte, \( \Delta t \) representa la disponibilidad de las rutas en función de los horarios, y \( p_a \) son las preferencias personales del agente.
+\begin{itemize}
+    \item \textbf{Desplazamiento de las guaguas}: Las guaguas se desplazan a lo largo del multigrafo $G$, siguiendo rutas predefinidas. Cada guagua sigue una ruta asignada $\rho_i \in R$, que corresponde a un conjunto de aristas en el multigrafo que conectan varias paradas, pero no actúan como agentes autónomos en la simulación.
+    
+    \[
+    \text{Ruta de la guagua } i: \rho_i = (v_{i1}, v_{i2}, \dots, v_{ik})
+    \]
+    
+    Donde $v_{i1}, v_{i2}, \dots, v_{ik} \in V$ son las paradas consecutivas en la ruta $\rho_i$.
+    
+    \item \textbf{Paradas y municipios}: Cada parada $v \in V$ pertenece a un municipio específico de La Habana. Formalmente, existe una función $\mu: V \rightarrow M$, donde $M$ es el conjunto de municipios, y $\mu(v)$ asigna un municipio a cada parada $v$. Esto permite modelar la distribución geográfica de las paradas dentro de la ciudad y analizar las rutas dentro de cada municipio o entre diferentes municipios.
+    
+    \item \textbf{Movilidad y tiempos de desplazamiento}: Cada guagua tiene un tiempo de desplazamiento asociado a cada arista $e_\ell^{ij} \in E_{ij}$ en su ruta, que está determinado por la función de peso $w(e_\ell^{ij})$, la cual representa la \textbf{distancia} entre las paradas $v_i$ y $v_j$ en una ruta específica.
+    
+    \item \textbf{Frecuencia de las guaguas}: Cada ruta $\rho_i$ tiene un intervalo de tiempo $\tau_i$ que representa la frecuencia con la que las guaguas parten de la primera parada $v_{i1}$. Este parámetro es esencial para simular la disponibilidad de transporte en diferentes rutas.
 
-El objetivo del modelo es estimar la cantidad de personas presentes en cada municipio de La Habana a lo largo de un periodo de 24 horas. Para esto, se realiza un análisis dinámico de la red de transporte, observando el flujo de agentes entre los nodos del grafo. Sea \( N(v,t) \) la cantidad de personas en el nodo \( v \) en el tiempo \( t \), que es función del número de agentes que ingresan y salen del nodo a través de las aristas \( e_{ij} \).
+    \item \textbf{Accesibilidad entre paradas}: Para cada agente, es posible llegar desde cualquier parada $v_i \in V$ a cualquier otra parada $v_j \in V$ mediante una o más rutas, ya sea de forma directa o a través de transbordos. Esta propiedad garantiza que la red de transporte cubre toda la ciudad y que los pasajeros pueden llegar a sus destinos, incluso si deben cambiar de guagua en varias ocasiones.
+    
+    \item \textbf{Agentes pasajeros}: Los pasajeros son los agentes del sistema y toman decisiones sobre qué ruta tomar para llegar a su destino. Estas decisiones dependen del estado del multigrafo (disponibilidad de guaguas, tiempos de espera, distancias entre paradas, etc.).
 
-\[
-N(v, t+1) = N(v, t) + \sum_{i} \left( \text{entradas}_i(v, t) - \text{salidas}_i(v, t) \right)
-\]
+    \item \textbf{Interacción dinámica}: Los pasajeros interactúan dinámicamente con el multigrafo $G$. Deciden abordar una guagua en una parada $v_i$ dependiendo de la ruta que ésta sigue, la distancia a su destino y el tiempo de espera. A medida que las guaguas se desplazan por las aristas, cambian el estado del entorno, lo cual afecta las decisiones de los pasajeros.
+    
+    \item \textbf{Actualización del estado}: El estado del multigrafo $G$ y de los agentes pasajeros se actualiza continuamente en función de la posición de las guaguas en las rutas, los tiempos de desplazamiento y la disponibilidad de conexiones en cada parada.
+\end{itemize}
 
-De esta manera, el comportamiento colectivo de los agentes a lo largo del día permitirá predecir la distribución de personas en los diferentes municipios de La Habana.
 
-Este enfoque, basado en una simulación multi-agente combinada con la modelación del multigrafo, proporciona una visión detallada y dinámica del comportamiento de movilidad urbana, lo que resulta esencial para cumplir con el objetivo de estimar la cantidad de habitantes en cada municipio en diferentes momentos del día.
+\subsection{Definición del Agente}
+\label{sec:defagente}
+
+Cada agente en la simulación está basado en la arquitectura \textbf{BDI (\textit{Belief-Desire-Intention})}, donde un agente tiene la capacidad de planificar rutas, tomar decisiones y ajustar su comportamiento según las circunstancias del entorno. Formalmente, el agente $A$ se define por los siguientes componentes:
+
+\subsubsection{Creencias (Beliefs)}
+
+El agente mantiene una serie de creencias $\mathcal{B}$ que definen su percepción del entorno y de sí mismo. Estas creencias se modelan como un conjunto de variables de estado:
+
+\begin{itemize}
+    \item $\mathcal{B}.\text{parada\_origen}$: La parada de transporte público en la que el agente comenzó su viaje.
+    \item $\mathcal{B}.\text{parada\_actual}$: La parada donde el agente se encuentra actualmente.
+    \item $\mathcal{B}.\text{destino}$: La parada de destino del agente.
+    \item $\mathcal{B}.\text{paradas\_next}$: Lista de paradas donde el agente debe cambiar de vehículo en su ruta planificada.
+    \item $\mathcal{B}.\text{current\_time}$: El tiempo actual en la simulación.
+    \item $\mathcal{B}.\text{ruta\_planificada}$: La ruta que el agente ha planificado para llegar a su destino.
+    \item $\mathcal{B}.\text{llego\_trabajo}$: Booleano que indica si el agente ha llegado a su lugar de trabajo.
+    \item $\mathcal{B}.\text{regreso\_casa}$: Booleano que indica si el agente ha regresado a su casa.
+    \item $\mathcal{B}.\text{cogio\_carro}$: Booleano que indica si el agente ha decidido utilizar un automóvil privado en lugar del transporte público.
+    \item $\mathcal{B}.\text{caminando}$: Booleano que indica si el agente ha decidido caminar hacia su destino.
+\end{itemize}
+
+\subsubsection{Deseos (Desires)}
+
+Los deseos $\mathcal{D}$ del agente son los objetivos que quiere lograr, y pueden ser dinámicos a lo largo del tiempo. En este modelo, los deseos más relevantes son:
+
+\begin{itemize}
+    \item $\mathcal{D}.\text{llegar\_destino}$: El agente desea llegar a su destino.
+    \item $\mathcal{D}.\text{regresar\_casa}$: El agente desea regresar a su casa.
+\end{itemize}
+
+\subsubsection{Intenciones (Intentions)}
+
+Las intenciones $\mathcal{I}$ del agente son los planes concretos que ejecuta para cumplir sus deseos, dadas sus creencias actuales. Por ejemplo:
+
+\begin{itemize}
+    \item $\mathcal{I}.\text{salir\_de\_casa}$: El agente decide salir de su casa para comenzar su viaje.
+    \item $\mathcal{I}.\text{esperar\_guagua}$: El agente decide esperar una guagua (autobús) en la parada actual.
+    \item $\mathcal{I}.\text{caminar}$: El agente decide caminar hacia su destino si no hay una guagua disponible despu\'es de un tiempo o si es una opción más conveniente según sus preferencias.
+    \item $\mathcal{I}.\text{coger\_carro}$: El agente decide utilizar un automóvil privado si la espera en la parada es muy larga o si es más beneficioso.
+\end{itemize}
+
+\subsubsection{Preferencias}
+
+Cada agente tiene un conjunto de preferencias $\mathcal{P}$ que influencian la toma de decisiones. Estas preferencias varían entre agentes y son modeladas como valores aleatorios entre 0 y 1, ponderando diferentes factores en la toma de decisiones. Las preferencias principales son:
+
+\begin{itemize}
+    \item $\mathcal{P}.\text{rapidez}$: Preferencia por rutas rápidas.
+    \item $\mathcal{P}.\text{comodidad}$: Preferencia por rutas cómodas (menor número de paradas y cambios de guagua).
+    \item $\mathcal{P}.\text{ganancias}$: Preferencia por poder pagar un autom\'ovil privado.
+    \item $\mathcal{P}.\text{laboriosidad}$: Preferencia por llegar al trabajo.
+    \item $\mathcal{P}.\text{condicion\_fisica}$: Nivel de condición física que afecta la velocidad al caminar o el tiempo máximo que puede soportar antes de decidir tomar un vehículo.
+    \item $\mathcal{P}.\text{paciencia}$: Tolerancia a las esperas prolongadas en la parada. Si se impacienta, el agente podría cambiar sus intenciones y optar por otras rutas o modos de transporte.
+\end{itemize}
+
+\subsubsection{Decisiones del Agente}
+
+El agente toma decisiones basadas en sus creencias, deseos e intenciones. Estas decisiones incluyen:
+
+\begin{itemize}
+    \item \textbf{Elección de Ruta:} El agente utiliza un algoritmo de búsqueda A* para planificar su ruta en el multigrafo que representa la red de transporte público. Esta ruta se ajusta dinámicamente según sus preferencias y el estado actual del sistema (como la disponibilidad de guaguas y la congestión).
+    
+    \item \textbf{Cambio de Ruta:} Si el agente considera que una ruta alternativa es más favorable (por ejemplo, si una guagua diferente llega a la parada), puede recalcular su ruta usando A* con diferentes estrategias, como minimizar la distancia o reducir el número de paradas.
+
+    \item \textbf{Impaciencia y Abandono de la Parada:} Si el agente lleva demasiado tiempo esperando una guagua, se pude impacientar. En este caso, el agente puede decidir abandonar la parada y caminar o coger un carro hacia su destino. El tiempo de espera antes de abandonar la parada se calcula en función de su preferencia de paciencia.
+\end{itemize}
+\subsection{Simulación por Eventos Discretos}
+La simulación desarrollada sigue un enfoque de eventos discretos, en el cual las interacciones de los agentes con el entorno se modelan en función de la ocurrencia de eventos programados en el tiempo. A continuación, se detallan los aspectos clave de este enfoque y cómo los agentes interactúan con el sistema de transporte simulado.
+
+\subsubsection{Manejo de Eventos}
+La simulación se organiza en torno a una cola de prioridad (\textit{heap}) de eventos. Cada evento contiene una marca temporal y un conjunto de argumentos que describen la acción a realizar. Los tipos principales de eventos incluyen:
+\begin{itemize}
+    \item \textbf{Llegada de Agente a Parada:} Un agente alcanza una parada y elige su próximo curso de acción, ya sea subirse a una guagua, continuar caminando, o esperar.
+    \item \textbf{Inicialización de Guagua:} Una guagua comienza su recorrido por una ruta específica según la frecuencia de su ruta.
+    \item \textbf{Movimiento de Guagua:} La guagua avanza de una parada a la siguiente, permitiendo que los pasajeros suban y bajen.
+    \item \textbf{Guardado de Datos:} Los datos de la simulación se registran en intervalos regulares para su posterior análisis.
+\end{itemize}
+
+\subsubsection{Interacción de los Agentes con el Entorno}
+En cada evento, los agentes actualizan sus creencias e intenciones basándose en la información disponible en el entorno.  Ver la secci\'on \ref{sec:defagente}
+
+\subsubsection{Eventos Clave en la Simulación}
+El flujo de la simulación depende del desencadenamiento de los eventos y las decisiones de los agentes. Los eventos se procesan en orden cronológico, lo que permite que la simulación avance de manera dinámica. El entorno, representado por un grafo de conexiones de rutas de guaguas, proporciona el contexto para las acciones de los agentes. La interacción de los agentes con este grafo y con las guaguas es fundamental para el éxito de sus trayectorias.
+
+A medida que los agentes completan sus trayectos o regresan a sus puntos de origen, el sistema de eventos sigue generando nuevas acciones, asegurando que la simulación capture la complejidad de la movilidad en un entorno urbano dinámico.
+
 
 
 % Sección de Resultados
