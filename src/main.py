@@ -37,8 +37,8 @@ def eliminar_codigo(archivo):
         for linea in bloque.splitlines():
             if linea.startswith('!['):
                images.append(linea)
-        bloque.replace('![', '#![')
-        exec(bloque)
+        m=bloque.replace('![', '#![')
+        exec(m)
         contenido = contenido.replace(f'```python\n{bloque}\n```', '\n'.join(images))
 
     # Escribe el contenido modificado en el archivo
