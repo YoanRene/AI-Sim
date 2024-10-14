@@ -56,11 +56,11 @@ Atendiendo a lo anterior se propone entonces la creaci\'on de un modelo capaz de
 % Sección de Metodología
 \section{Metodología}
 \subsection{Preliminares}
-Nuestra simulación se basa en un \textbf{modelo de eventos discretos}, que captura los cambios de estado en momentos específicos del tiempo. El sistema está diseñado bajo un enfoque de \textbf{sistemas basados en agentes}, donde el \textbf{medio ambiente} es la red de transporte público de La Habana, y los \textbf{agentes} son pasajeros que interactúan con dicho medio.
+Nuestra simulación se basa en un \textbf{modelo de eventos discretos}, que captura los cambios de estado en momentos específicos del tiempo \cite{law2014simulation}. El sistema está diseñado bajo un enfoque de \textbf{sistemas basados en agentes} \cite{wooldridge2009introduction}, donde el \textbf{medio ambiente} es la red de transporte público de La Habana, y los \textbf{agentes} son pasajeros que interactúan con dicho medio.
 
 \subsection{Definci\'on del Medio Ambiente}
 
-El medio ambiente en el que operan los agentes está sobre un \textbf{multigrafo} $G = (V, E, \rho, w)$ que modela la red de transporte público de La Habana. El multigrafo se define de la siguiente manera:
+El medio ambiente en el que operan los agentes está sobre un \textbf{multigrafo} $G = (V, E, \rho, w)$ que modela la red de transporte público de La Habana \cite{evans2021public}. El multigrafo se define de la siguiente manera:
 
 \begin{itemize}
     \item $V = \{v_1, v_2, \dots, v_n\}$ es el conjunto de vértices que representan las \textbf{paradas de transporte público}.
@@ -99,7 +99,7 @@ El medio ambiente en el que operan los agentes está sobre un \textbf{multigrafo
 \subsection{Definición del Agente}
 \label{sec:defagente}
 
-Cada agente en la simulación está basado en la arquitectura \textbf{BDI (\textit{Belief-Desire-Intention})}, donde un agente tiene la capacidad de planificar rutas, tomar decisiones y ajustar su comportamiento según las circunstancias del entorno. Formalmente, el agente $A$ se define por los siguientes componentes:
+Cada agente en la simulación está basado en la arquitectura \textbf{BDI (\textit{Belief-Desire-Intention})} \cite{rao1995bdi}, donde un agente tiene la capacidad de planificar rutas, tomar decisiones y ajustar su comportamiento según las circunstancias del entorno. Formalmente, el agente $A$ se define por los siguientes componentes:
 
 \subsubsection{Creencias (Beliefs)}
 
@@ -156,9 +156,9 @@ Cada agente tiene un conjunto de preferencias $\mathcal{P}$ que influencian la t
 El agente toma decisiones basadas en sus creencias, deseos e intenciones. Estas decisiones incluyen:
 
 \begin{itemize}
-    \item \textbf{Elección de Ruta:} El agente utiliza un algoritmo de búsqueda A* para planificar su ruta en el multigrafo que representa la red de transporte público. Esta ruta se ajusta dinámicamente según sus preferencias y el estado actual del sistema (como la disponibilidad de guaguas y la congestión).
+    \item \textbf{Elección de Ruta:} El agente utiliza un algoritmo de búsqueda A* para planificar su ruta en el multigrafo que representa la red de transporte público \cite{hart1968formal}. Esta ruta se ajusta dinámicamente según sus preferencias y el estado actual del sistema (como la disponibilidad de guaguas y la congestión).
     
-    \item \textbf{Cambio de Ruta:} Si el agente considera que una ruta alternativa es más favorable (por ejemplo, si una guagua diferente llega a la parada), puede recalcular su ruta usando A* con diferentes estrategias, como minimizar la distancia o reducir el número de paradas.
+    \item \textbf{Cambio de Ruta:} Si el agente considera que una ruta alternativa es más favorable (por ejemplo, si una guagua diferente llega a la parada), puede recalcular su ruta usando A* con diferentes estrategias \cite{hart1968formal}, como minimizar la distancia o reducir el número de paradas.
 
     \item \textbf{Impaciencia y Abandono de la Parada:} Si el agente lleva demasiado tiempo esperando una guagua, se pude impacientar. En este caso, el agente puede decidir abandonar la parada y caminar o coger un carro hacia su destino. El tiempo de espera antes de abandonar la parada se calcula en función de su preferencia de paciencia.
 \end{itemize}
@@ -166,16 +166,15 @@ El agente toma decisiones basadas en sus creencias, deseos e intenciones. Estas 
 La simulación desarrollada sigue un enfoque de eventos discretos, en el cual las interacciones de los agentes con el entorno se modelan en función de la ocurrencia de eventos programados en el tiempo. A continuación, se detallan los aspectos clave de este enfoque y cómo los agentes interactúan con el sistema de transporte simulado.
 
 \subsubsection{Manejo de Eventos}
-La simulación se organiza en torno a una cola de prioridad (\textit{heap}) de eventos. Cada evento contiene una marca temporal y un conjunto de argumentos que describen la acción a realizar. Los tipos principales de eventos incluyen:
+La simulación se organiza en torno a una cola de prioridad (\textit{heap}) de eventos \cite{cormen2009introduction}. Cada evento contiene una marca temporal y un conjunto de argumentos que describen la acción a realizar. Los tipos principales de eventos incluyen:
 \begin{itemize}
     \item \textbf{Llegada de Agente a Parada:} Un agente alcanza una parada y elige su próximo curso de acción, ya sea subirse a una guagua, continuar caminando, o esperar.
     \item \textbf{Inicialización de Guagua:} Una guagua comienza su recorrido por una ruta específica según la frecuencia de su ruta.
     \item \textbf{Movimiento de Guagua:} La guagua avanza de una parada a la siguiente, permitiendo que los pasajeros suban y bajen.
-    \item \textbf{Guardado de Datos:} Los datos de la simulación se registran en intervalos regulares para su posterior análisis.
 \end{itemize}
 
 \subsubsection{Interacción de los Agentes con el Entorno}
-En cada evento, los agentes actualizan sus creencias e intenciones basándose en la información disponible en el entorno.  Ver la secci\'on \ref{sec:defagente}
+En cada evento, los agentes actualizan sus creencias e intenciones basándose en la información disponible en el entorno.  Ver la secci\'on \ref{sec:defagente}.
 
 \subsubsection{Eventos Clave en la Simulación}
 El flujo de la simulación depende del desencadenamiento de los eventos y las decisiones de los agentes. Los eventos se procesan en orden cronológico, lo que permite que la simulación avance de manera dinámica. El entorno, representado por un grafo de conexiones de rutas de guaguas, proporciona el contexto para las acciones de los agentes. La interacción de los agentes con este grafo y con las guaguas es fundamental para el éxito de sus trayectorias.
@@ -192,6 +191,8 @@ A medida que los agentes completan sus trayectos o regresan a sus puntos de orig
 
 
 % Sección de Bibliografía
+\bibliographystyle{plainnat} % o el estilo que prefieras
+\bibliography{bibliography} % Asegúrate de que el archivo .bib está en el mismo directorio
 
 
 \end{document}
