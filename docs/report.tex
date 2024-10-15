@@ -229,7 +229,7 @@ Un ejemplo típico de interacción con el LLM puede incluir preguntas como: \tex
 
 \subsection{Introducción}
 
-Se presentan los resultados de una serie de simulaciones realizadas para analizar el comportamiento de diferentes parámetros y su impacto en el rendimiento del sistema de transporte público en La Habana. Se simularon diferentes escenarios para evaluar el impacto de la capacidad del autobús, el número de agentes y la existencia de rutas ficticias en la eficiencia del transporte público. En la simulaci\'on el conjunto $R$ de la secci\'on \ref{medio_ambiente}  utilizado fue $\{P1,P2,...,P16,PC\}$ conocidas por todos los cubanos como los \textit{pe}, las cuales son las rutas prinicipales del transporte en La Habana, luego las componentes modeladas son las definidas por dichas rutas.
+Se presentan los resultados de una serie de simulaciones realizadas para analizar el comportamiento de diferentes parámetros y su impacto en el rendimiento del sistema de transporte público en La Habana. Se simularon diferentes escenarios para evaluar el impacto de la capacidad del autobús, el número de agentes y la existencia de rutas en la eficiencia del transporte público. En la simulaci\'on el conjunto $R$ de la secci\'on \ref{medio_ambiente}  utilizado fue $\{P1,P2,...,P16,PC\}$ conocidas por todos los cubanos como los \textit{pe}, las cuales son las rutas prinicipales del transporte en La Habana, luego las componentes modeladas son las definidas por dichas rutas.
 
 \subsection{Parámetros de la Simulación}
 
@@ -246,18 +246,18 @@ Los siguientes parámetros se utilizaron en las simulaciones:
 Se evaluaron las siguientes métricas clave en cada simulación:
 
 \begin{itemize}
-\item Viajes completados: La mayoría de las simulaciones lograron un alto porcentaje de viajes completados, con un promedio general de 93.4\%.
-\item Destinos completados: Se observa una alta correlación entre viajes completados y destinos completados, con un promedio de 93.3\%.
-\item Regresaron a la casa sin llegar al trabajo: La mayoría de las simulaciones tuvieron un bajo porcentaje de usuarios que regresaron a casa sin llegar al trabajo, con un promedio general de 0.1\%.
-\item Tiempo promedio de viaje: El tiempo promedio de viaje varía significativamente entre las diferentes configuraciones de la simulación, con un promedio general de 139.5 minutos.
-\item Llenado de las rutas: El llenado de las rutas varía según la ruta y la configuración, con un promedio general de 25.5\%.
+\item Viajes completados: La mayoría de las simulaciones lograron un alto porcentaje de viajes completados por agentes, con un promedio general de 93.4\%.
+\item Destinos completados: Se observa una alta correlación entre viajes completados y destinos completados por agentes donde este \'utimo representa tanto la ida al trabajo como el regreso, con un promedio de 93.3\%.
+\item Regresaron a la casa sin llegar al trabajo: La mayoría de las simulaciones tuvieron un bajo porcentaje de agentes que regresaron a casa sin llegar al trabajo, con un promedio general de 0.1\%.
+\item Tiempo promedio de viaje al trabajo del agente: El tiempo promedio de viaje varía significativamente entre las diferentes configuraciones de la simulación, con un promedio general de 139.5 minutos.
+\item Llenado de las rutas: El llenado de las rutas varía según la ruta y la configuración, con un promedio general de 1.5\% (nada m\'as lejos de la realidad cubana).
 \end{itemize}
 
 \subsection{Resultados}
 
 \subsubsection{Distribución de Pasajeros}
 
-Se observa que las rutas con mayor cantidad de pasajeros transportados son las rutas P1, P2, P10 y P11. Esto se debe a la alta demanda en estas zonas, la buena distribución de las paradas y la frecuencia de los servicios. Las rutas P2, P3, P4, P5, P6, P7, P8, P9, y PC registran una menor cantidad de pasajeros, lo que indica una menor demanda o un menor uso del transporte público en estas zonas.
+Se observa que las rutas con mayor cantidad de pasajeros transportados son las rutas P1, P2, P10 y P11. Esto se debe a la alta demanda en estas zonas, la distribución de las paradas y la frecuencia de los servicios. Las rutas P2, P3, P4, P5, P6, P7, P8, P9, y PC registran una menor cantidad de pasajeros, lo que indica una menor demanda o un menor uso del transporte público en estas zonas.
 
 \subsubsection{Porcentaje de Llenado}
 
