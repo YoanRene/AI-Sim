@@ -64,6 +64,7 @@ Atendiendo a lo anterior se propone entonces la creaci\'on de un modelo capaz de
 Nuestra simulación se basa en un \textbf{modelo de eventos discretos}, que captura los cambios de estado en momentos específicos del tiempo \cite{law2014simulation}. El sistema está diseñado bajo un enfoque de \textbf{sistemas basados en agentes} \cite{wooldridge2009introduction}, donde el \textbf{medio ambiente} es la red de transporte público de La Habana, y los \textbf{agentes} son pasajeros que interactúan con dicho medio.
 
 \subsection{Definci\'on del Medio Ambiente}
+\label{medio_ambiente}
 
 El medio ambiente en el que operan los agentes está sobre un \textbf{multigrafo} $G = (V, E, \rho, w)$ que modela la red de transporte público de La Habana \cite{evans2021public}. El multigrafo se define de la siguiente manera:
 
@@ -226,8 +227,107 @@ Un ejemplo típico de interacción con el LLM puede incluir preguntas como: \tex
 % Sección de Resultados
 \section{Resultados y Discusi\'on}
 
-% Sección de Conclusiones
+\subsection{Introducción}
+
+Se presentan los resultados de una serie de simulaciones realizadas para analizar el comportamiento de diferentes parámetros y su impacto en el rendimiento del sistema de transporte público en La Habana. Se simularon diferentes escenarios para evaluar el impacto de la capacidad del autobús, el número de agentes y la existencia de rutas ficticias en la eficiencia del transporte público. En la simulaci\'on el conjunto $R$ de la secci\'on \ref{medio_ambiente}  utilizado fue $\{P1,P2,...,P16,PC\}$ conocidas por todos los cubanos como los \textit{pe}, las cuales son las rutas prinicipales del transporte en La Habana, luego las componentes modeladas son las definidas por dichas rutas.
+
+\subsection{Parámetros de la Simulación}
+
+Los siguientes parámetros se utilizaron en las simulaciones:
+
+\begin{itemize}
+\item Número de agentes: Determina la cantidad de personas que requieren transporte.
+\item Capacidad del autobús: Define la cantidad máxima de pasajeros que puede transportar un autobús.
+\item Ruta inexistente: Eliminamos una ruta que existe en la realidad para evaluar el impacto en la distribución de pasajeros.
+\end{itemize}
+
+\subsection{Resumen de las Métricas Clave}
+
+Se evaluaron las siguientes métricas clave en cada simulación:
+
+\begin{itemize}
+\item Viajes completados: La mayoría de las simulaciones lograron un alto porcentaje de viajes completados, con un promedio general de 93.4\%.
+\item Destinos completados: Se observa una alta correlación entre viajes completados y destinos completados, con un promedio de 93.3\%.
+\item Regresaron a la casa sin llegar al trabajo: La mayoría de las simulaciones tuvieron un bajo porcentaje de usuarios que regresaron a casa sin llegar al trabajo, con un promedio general de 0.1\%.
+\item Tiempo promedio de viaje: El tiempo promedio de viaje varía significativamente entre las diferentes configuraciones de la simulación, con un promedio general de 139.5 minutos.
+\item Llenado de las rutas: El llenado de las rutas varía según la ruta y la configuración, con un promedio general de 25.5\%.
+\end{itemize}
+
+\subsection{Resultados}
+
+\subsubsection{Distribución de Pasajeros}
+
+Se observa que las rutas con mayor cantidad de pasajeros transportados son las rutas P1, P2, P10 y P11. Esto se debe a la alta demanda en estas zonas, la buena distribución de las paradas y la frecuencia de los servicios. Las rutas P2, P3, P4, P5, P6, P7, P8, P9, y PC registran una menor cantidad de pasajeros, lo que indica una menor demanda o un menor uso del transporte público en estas zonas.
+
+\subsubsection{Porcentaje de Llenado}
+
+El porcentaje de llenado de los autobuses refleja una alta utilización del servicio en las rutas más demandadas. La ruta P1 tiene un llenado promedio por encima del resto significativamente, lo que sugiere que esta es la ruta que pasa por los sitios con mayor acumulación de personas. El resto de las rutas mantiene un porcentaje de llenado bastante similar, lo que parece indicar que están más balanceadas las paradas entre paradas en las que se acumulan varias personas y paradas relativamente vacías.
+
+\subsubsection{Tiempo Promedio de Viaje}
+
+El tiempo promedio de viaje se ve afectado por varios factores, como la distancia de la ruta, la frecuencia de los servicios, la cantidad de pasajeros, y la capacidad del autobús. Se observa que las rutas P1, P2, P3, P4, P5, P6, P7, P8, P9 y PC tienen tiempos de viaje promedio de 120 a 160 minutos. El tiempo promedio de viaje está correlacionado con la cantidad de agentes y la capacidad del autobús.
+
+\subsubsection{Distribución de Viajes Completados}
+
+\begin{itemize}
+\item Rutas más eficaces: Se pueden identificar las rutas más eficaces al analizar el número de pasajeros transportados, el porcentaje de llenado y el tiempo promedio de viaje. La ruta P10 parece ser una de las más eficaces en términos de tiempo promedio de viaje.
+\item Impacto de la capacidad del autobús: Un aumento en la capacidad del autobús tiene un impacto positivo en el tiempo promedio de viaje.
+\item Impacto del número de agentes: Un mayor número de agentes no siempre implica un tiempo promedio de viaje más corto. Se debe analizar la distribución de los agentes en las diferentes rutas para optimizar la eficiencia.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imgs/pasajeros_ruta.png}
+    \caption{Pasajeros Transportados por Ruta}
+    \label{fig:3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imgs/tiempo_agentes.png}
+    \caption{Tiempo Promedio de Viaje(minutos) vs N\'umero de Agentes}
+    \label{fig:3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imgs/tiempo_capacidad.png}
+    \caption{Tiempo Promedio de Viaje(minutos) vs Capacidad del \'omnibus}
+    \label{fig:3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imgs/tiempo_ruta.png}
+    \caption{Tiempo Promedio de Viaje(minutos) por Ruta}
+    \label{fig:3}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imgs/llenado_ruta.png}
+    \caption{Porcentaje de Llenado por Ruta}
+    \label{fig:3}
+\end{figure}
+
+
 \section{Conclusiones}
+
+La simulación de transporte público en La Habana ha revelado información valiosa sobre el comportamiento del sistema bajo diferentes condiciones. Se ha observado que la demanda de transporte público varía según la zona y la ruta. El tiempo promedio de viaje está correlacionado con la cantidad de agentes y la capacidad del autobús. La capacidad de los autobuses tiene un impacto directo en la cantidad de pasajeros que pueden transportar. Los resultados sugieren que la optimización de las rutas, la frecuencia de los servicios y la capacidad de los autobuses son factores clave para mejorar el rendimiento del sistema de transporte público.
+
+\subsection{Recomendaciones}
+
+\begin{itemize}
+\item Optimizar las rutas para minimizar el tiempo promedio de viaje y la cantidad de pasajeros que utilizan las rutas con menor demanda.
+\item Disminuir el tiempo de salida de guaguas en la ruta P1 ya que según nuestros datos observamos que esta es la ruta que transporta a una cantidad mayor de personas, lo cual reduciría los tiempos de viajes y una mayor cantidad de personas podrían llegar a su objetivo más rápidamente y mejorar la satisfacción del usuario.
+\item Ajustar la capacidad de los autobuses en función de la demanda de cada ruta para asegurar un uso eficiente de los recursos. Es decir, utilizar autobuses de menor capacidad en las rutas con menos densidad poblacional.
+\end{itemize}
+
+\subsection{Próximos Pasos}
+
+La simulación podría mejorarse al incluir elementos como:
+
+\begin{itemize}
+\item Simulación con los datos reales de población y capacidad de guaguas, así como todas las rutas de estas para un mayor entendimiento del comportamiento de la población de la ciudad de La Habana durante el día.
+\end{itemize}
+
+La implementación de estos elementos permitirá obtener resultados más precisos y útiles para la toma de decisiones en el sistema de transporte público de La Habana.
 
 
 % Sección de Bibliografía
