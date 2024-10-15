@@ -19,7 +19,7 @@ def render_markdown(markdown_file, output_file):
     f.write(html)
 
 # Ejemplo de uso:
-def eliminar_codigo(archivo):
+def eliminar_codigo(archivo, carpeta_salida = 'out'):
     """Elimina el código dentro de bloques ```python en un archivo.
 
     Args:
@@ -38,6 +38,7 @@ def eliminar_codigo(archivo):
             if linea.startswith('!['):
                images.append(linea)
         m=bloque.replace('![', '#![')
+        m=m.replace("plt.savefig('", f"plt.savefig('{carpeta_salida}/")
         exec(m)
         contenido = contenido.replace(f'```python\n{bloque}\n```', '\n'.join(images))
 

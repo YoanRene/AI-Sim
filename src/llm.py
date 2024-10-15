@@ -220,8 +220,8 @@ La simulacion empieza a las 6 de la manana
 
   Dale una respuesta al usuario teniendo en cuenta esos datos. Haz un analisis estadistico completo con
   los resultados, puedes usar codigo python con pandas y matplotlib para generar un graficos, pero cada imagen
-  no se debe mostrar, solo guardar en un archivo .png en la carpeta out, es decir: plt.savefig('out/nombre_imagen.png') en cual debe ser referenciado justo debajo del codigo
-  en cuestion de la siguiente forma ![Descripción de la imagen](nombre_imagen.png) fuera del bloque de codigo y sin el out
+  no se debe mostrar, solo guardar en un archivo .png ,es decir: plt.savefig('nombre_imagen.png') en cual debe ser referenciado justo debajo del codigo
+  en cuestion de la siguiente forma ![Descripción de la imagen](nombre_imagen.png) fuera del bloque de codigo.
 
   Para mas informacion, en promedio los datos con parametros por defecto de la simulacion se comportan de la siguiente manera:
   Hora,Playa,Revolution Square,Centro Habana,La Habana Vieja,Regla,Habana del Este,Guanabacoa,San Miguel del Padrón,Diez de Octubre,Cerro,Marianao,La Lisa,Boyeros,Arroyo Naranjo,Cotorro
