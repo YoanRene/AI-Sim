@@ -8,7 +8,6 @@
 \usepackage{hyperref}
 \usepackage{float}
 \usepackage[numbers]{natbib}
-\usepackage{multicol}
 
 
 
@@ -21,9 +20,8 @@
 \titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
 
 % Información del documento
-\title{Proyecto de IA-Simulaci\'on\\\textit{Tema: Movilidad Humana en La Habana}}
-\author{Yoan Ren\'e Ramos Corrales  C-412  \and  David Cabrera Garc\'ia  C-411}
-
+\title{Proyecto de IA-Simulaci\'on\\\textit{Tema: Movilidad Humana en La Habana}\footnote{Propuesta del profesor Alejandro Mesejo como Proyecto de Inteligencia Artificial y Simulaci\'on de Ciencias de la Computación. M\'as detalle \href{https://github.com/YoanRene/AI-Sim/blob/master/docs/PropuestaProyecto-Simulacion-IA.pdf}{aqu\'i}.}}
+\author{Yoan Ren\'e Ramos Corrales  C-412  \and  David Cabrera Garc\'ia  C-411 \\\\ \small{Facultad de Matemática y Computación, Universidad de La Habana}}
 
 
 \begin{document}
@@ -61,7 +59,7 @@ Atendiendo a lo anterior se propone entonces la creaci\'on de un modelo capaz de
 % Sección de Metodología
 \section{Metodología}
 \subsection{Preliminares}
-Nuestra simulación se basa en un \textbf{modelo de eventos discretos}, que captura los cambios de estado en momentos específicos del tiempo \cite{law2014simulation}. El sistema está diseñado bajo un enfoque de \textbf{sistemas basados en agentes} \cite{wooldridge2009introduction}, donde el \textbf{medio ambiente} es la red de transporte público de La Habana, y los \textbf{agentes} son pasajeros que interactúan con dicho medio.
+Nuestra simulación se basa en un \textbf{modelo de eventos discretos}, que captura los cambios de estado en momentos específicos del tiempo \cite{law2014simulation}. El sistema está diseñado bajo un enfoque de \textbf{sistemas basados en agentes} \cite{wooldridge2009introduction}, donde el \textbf{medio ambiente} es la red de transporte público de La Habana, y los \textbf{agentes} son pasajeros que interactúan con dicho medio. En lo adelante usaremos el término \textit{``guagua''} sin coloquialismos para referirnos a los \'omnibus o autobuses, pues es la forma en que los cubanos naturalmente le llamamos. 
 
 \subsection{Definci\'on del Medio Ambiente}
 \label{medio_ambiente}
@@ -189,7 +187,7 @@ A medida que los agentes completan sus trayectos o regresan a sus puntos de orig
 
 \subsection{Uso de Modelos de Lenguaje para la Configuración y Ejecución de la Simulaci\'on}
 
-En el desarrollo de la simulación de movilidad humana para la ciudad de La Habana, se ha implementado un enfoque que integra modelos de lenguaje avanzados (LLMs, por sus siglas en inglés) para automatizar tanto la configuración como la ejecución de la simulación \cite{llm_overview}. Este enfoque permite a los usuarios interactuar con el sistema mediante lenguaje natural, facilitando el proceso de configuración y la posterior interpretación de los resultados generados por la simulación.
+En el desarrollo de la simulación de movilidad humana para la ciudad de La Habana, se ha implementado un enfoque que integra grandes modelos de lenguaje (LLMs, por sus siglas en inglés) para automatizar tanto la configuración como la ejecución de la simulación \cite{llm_overview}. Este enfoque permite a los usuarios interactuar con el sistema mediante lenguaje natural, facilitando el proceso de configuración y la posterior interpretación de los resultados generados por la simulación.
 
 \subsubsection{Generación y Ejecución de la Simulación}
 
@@ -213,6 +211,8 @@ Al finalizar la simulación, el LLM no solo proporciona los resultados brutos ge
 
 Un ejemplo típico de interacción con el LLM puede incluir preguntas como: \textit{“¿Qué sucede si solo está disponible la ruta P11?”} o \textit{“¿Cómo afectaría a la población de Habana del Este la falta de guaguas en la ruta P1?”}. El LLM ajusta los parámetros de la simulación según la consulta, ejecuta la simulación y presenta un análisis exhaustivo de los resultados, considerando las condiciones impuestas por el usuario.
 
+Claro está, los resultados muchas veces están sujetos de errores, desde confundir a las guaguas con bebés producto de que en otros países se les llama así, hasta diseñar gráficas que no representan de ninguna manera los resultados de la simulaci\'on , exhorto al lector a profundizar en los prompts utilizados en el proyecto, los cuáles se encuentran en el archivo \href{https://github.com/YoanRene/AI-Sim/blob/master/src/llm.py}{llm.py}.
+
 \subsubsection{Ventajas del Uso de LLMs en la Simulación}
 \begin{itemize}
     \item Automatización integral del proceso de configuración, ejecución y análisis de simulaciones.
@@ -229,7 +229,7 @@ Un ejemplo típico de interacción con el LLM puede incluir preguntas como: \tex
 
 \subsection{Introducción}
 
-Se presentan los resultados de una serie de simulaciones realizadas para analizar el comportamiento de diferentes parámetros y su impacto en el rendimiento del sistema de transporte público en La Habana. Se simularon diferentes escenarios para evaluar el impacto de la capacidad del autobús, el número de agentes y la existencia de rutas en la eficiencia del transporte público. En la simulaci\'on el conjunto $R$ de la secci\'on \ref{medio_ambiente}  utilizado fue $\{P1,P2,...,P16,PC\}$ conocidas por todos los cubanos como los \textit{pe}, las cuales son las rutas prinicipales del transporte en La Habana, luego las componentes modeladas (paradas, conexiones entre paradas, etc.) son las definidas por dichas rutas. Con respecto a la distribuci\'on de datos utilizada se apoya en la Tabla: \textit{Poblaci\'on de Cuba por provincias y municipios} para la proporci\'on de los capitalinos por sus respectivos municipios \cite{onei2022}, y en la Tabla: \textit{La Habana: Distribuci\'on de los ocupados seg\'un municipios de residencia y municipios donde radican las entidades \%} para determinar qu\'e porcentaje de personas de un municipio $M_i$ trabajan en un municipio $M_j$ \cite{aja2023}.  Adem\'as se tuvo en cuenta los horarios \textit{pico}, en que las personas salen a su lugar de trabajo y regresan de este, los cuales se consider\'o que son de 6:00am a 8:00am y de 3:00pm a 5:00pm. Con respecto a las paradas y rutas se utiliz\'o la base de datos de  la app MWurbanos \cite{apklis}. Todas las gr\'aficas y tablas plasmadas en este documento se puden consultar en una mayor escala \href{https://github.com/YoanRene/AI-Sim/tree/master/docs/imgs}{aqu\'i}. 
+Se presentan los resultados de una serie de simulaciones realizadas para analizar el comportamiento de diferentes parámetros y su impacto en el rendimiento del sistema de transporte público en La Habana. Se simularon diferentes escenarios para evaluar el impacto de la capacidad del autobús, el número de agentes y la existencia de rutas en la eficiencia del transporte público. En la simulaci\'on el conjunto $R$ de la secci\'on \ref{medio_ambiente}  utilizado fue $\{P1,P2,...,P16,PC\}$ conocidas por todos los cubanos como los \textit{``pe''}, las cuales son las rutas prinicipales del transporte en La Habana, luego las componentes modeladas (paradas, conexiones entre paradas, etc.) son las definidas por dichas rutas. Con respecto a la distribuci\'on de datos utilizada se apoya en la Tabla: \textit{Poblaci\'on de Cuba por provincias y municipios} para la proporci\'on de los capitalinos por sus respectivos municipios \cite{onei2022}, y en la Tabla: \textit{La Habana: Distribuci\'on de los ocupados seg\'un municipios de residencia y municipios donde radican las entidades \%} para determinar qu\'e porcentaje de personas de un municipio $M_i$ trabajan en un municipio $M_j$ \cite{aja2023}.  Adem\'as se tuvo en cuenta los horarios \textit{``pico''}, en que las personas salen a su lugar de trabajo y regresan de este, los cuales se consider\'o que son de 6:00am a 8:00am y de 3:00pm a 5:00pm. Con respecto a las paradas y rutas se utiliz\'o la base de datos de  la app MWurbanos \cite{apklis}. Todas las gr\'aficas y tablas plasmadas en este documento se puden consultar en una mayor escala \href{https://github.com/YoanRene/AI-Sim/tree/master/docs/imgs}{aqu\'i}. 
 
 \subsection{Parámetros de la Simulación}
 
@@ -280,7 +280,7 @@ La otra forma en que expresamos lo mismo es a través de un mapa de calor de La 
     \label{fig:3}
 \end{figure}
 
-An\'alogamente a lo visto en la Figura \ref{fig:2} se presentan dos muestras curiosas de la simulaci\'on, la Figura \ref{fig:4} y la Figura \ref{fig:5}, en la primera se observa una tendencia de los agentes de ir al municipio Plaza de la Revoluci\'on y no regresar, el hecho aqu\'i es que la cantidad de agentes al superar en gran medida a la cantidad de guaguas, estas no puden brindar un buen servicio, por lo que muchos de los agentes en su af\'an de cumplir sus deseos deciden llegar al destino, en su mayor\'ia inclinados m\'as por ir caminando que en carro, por lo cual muchos llegan a sus respectivos empleos bastante tarde, el problema es que al regresar, como simulamos un solo d\'ia ellos llegar\'ian a su casa en su mayor\'ia al d\'ia siguiente, lo cual no se ve reflejado en la gr\'afica. Con respecto a la otra figura notar que pese a la ausencia del P1 como ruta, se mantiene bastante igual el comportamiento a la FIgura \ref{fig:2}, esto se debe al comportamiento del agente de poder encontrar una ruta alternativa a su destino.
+An\'alogamente a lo visto en la Figura \ref{fig:2} se presentan dos muestras curiosas de la simulaci\'on, la Figura \ref{fig:4} y la Figura \ref{fig:5}, en la primera se observa una tendencia de los agentes de ir al municipio Plaza de la Revoluci\'on y no regresar, el hecho aqu\'i es que la cantidad de agentes al superar en gran medida a la cantidad de guaguas, estas no puden brindar un buen servicio, por lo que muchos de los agentes en su af\'an de cumplir sus deseos deciden llegar al destino, en su mayor\'ia inclinados m\'as por ir caminando que en carro, por lo cual muchos llegan a sus respectivos empleos bastante tarde, el problema es que al regresar, como simulamos un solo d\'ia ellos llegar\'ian a su casa en su mayor\'ia al d\'ia siguiente, lo cual no se ve reflejado en la gr\'afica. Con respecto a la otra figura notar que pese a la ausencia del P1 como ruta, se mantiene bastante igual el comportamiento a la Figura \ref{fig:2}, esto se debe al comportamiento del agente de poder encontrar una ruta alternativa a su destino.
 
 \begin{figure}[H]
     \hspace{-3cm}
@@ -295,7 +295,7 @@ An\'alogamente a lo visto en la Figura \ref{fig:2} se presentan dos muestras cur
     \label{fig:5}
 \end{figure}
 
-Analizando la muestra de la Figura \ref{fig:5} surge una pregunta: ¿Qué tanto influye entonces una ruta en el desplazamiento de los agentes? Como respuesta veamos lo que sucede en la Figura \ref{fig:6}, en esta se aprecia un alto \'indice de agentes transportados en las rutas que transitan Plaza de la Revoluci\'on y Playa tales como el P9,P1,P2 y PC muy fuertemente ligado a las cuestiones ya mencionadas de tener alta tasa de trabajos. Tal como se observa el n\'umero de personas que usan el transporte p\'ublico es bastante alto, lo cual se considera un se logr\'o pues se acerca m\'as a realidad, teniendo en cuenta que no se us\'o una frecuencia de salida de guaguas muy cerca en el tiempo (60 minutos).
+Analizando la muestra de la Figura \ref{fig:5} surge una pregunta: ¿Qué tanto influye entonces una ruta en el desplazamiento de los agentes? Como respuesta veamos lo que sucede en la Figura \ref{fig:6}, en esta se aprecia un alto \'indice de agentes transportados en las rutas que transitan Plaza de la Revoluci\'on y Playa tales como el P9,P1,P2 y PC muy fuertemente ligado a las cuestiones ya mencionadas de tener alta tasa de trabajos. Tal como se observa el n\'umero de personas que usan el transporte p\'ublico es bastante alto, lo cual se considera un logro pues se acerca m\'as a la realidad, teniendo en cuenta que no se us\'o una frecuencia de salida de guaguas en una ruta muy cerca en el tiempo (60 minutos).
 
 \begin{figure}[H]
      \hspace{-2cm}
@@ -310,7 +310,7 @@ Analizando la muestra de la Figura \ref{fig:5} surge una pregunta: ¿Qué tanto 
     \label{fig:7}
 \end{figure}
 \newpage
-A continuaci\'on vemos en la Figura \ref{fig:7} una correlaci\'on entre el tiempo promedio de viaje y la capacidad de la guaga, indicando que entre m\'as haya capacidad m\'as r\'apido llegan las personas a sus respectivos destinos, aunque notar cierta peculiaridad en que la media de muestras en 20 est\'a ligeramente por encima de la media de las muestras de 10, queda pendiente analizar esto al detalle, puesto que carece un tanto de sentido con la visi\'on puesta en lo real. 
+A continuaci\'on vemos en la Figura \ref{fig:7} una correlaci\'on entre el tiempo promedio de viaje y la capacidad de la guagua, indicando que entre m\'as haya capacidad m\'as r\'apido llegan las personas a sus respectivos destinos, aunque notar cierta peculiaridad en que la media de muestras en 20 est\'a ligeramente por encima de la media de las muestras de 10, queda pendiente analizar esto al detalle, puesto que carece un tanto de sentido con la visi\'on puesta en lo real. 
 
 
 \section{Conclusiones}
@@ -330,7 +330,7 @@ La simulación podría mejorarse al incluir elementos como:
 \begin{itemize}
 \item Simulación con los datos reales de población y capacidad de guaguas, así como todas las rutas de estas para un mayor entendimiento del comportamiento de la población de la ciudad de La Habana durante el día.
 \item Observaci\'on de las simulaciones mediante la interfaz del mapa implementado vi\'endose las guaguas recorriendo el mapa.
-\item Simulaci\'on de las rutas alimentadoras y complementarias como los son la 179,69,A27 entre otras, as\'i como el servicio de Metrotaxi.
+\item Simulaci\'on de las rutas alimentadoras y complementarias como los son la 179, 69, A27, entre otras, as\'i como el servicio de Metrotaxi.
 \item Con el tema de distancia si se tiene en cuenta donde la guagua dobla se simula mejor los tiempos de llegada de esta a una parada.
 \end{itemize}
 
