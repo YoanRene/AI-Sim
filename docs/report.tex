@@ -229,94 +229,98 @@ Un ejemplo típico de interacción con el LLM puede incluir preguntas como: \tex
 
 \subsection{Introducción}
 
-Se presentan los resultados de una serie de simulaciones realizadas para analizar el comportamiento de diferentes parámetros y su impacto en el rendimiento del sistema de transporte público en La Habana. Se simularon diferentes escenarios para evaluar el impacto de la capacidad del autobús, el número de agentes y la existencia de rutas en la eficiencia del transporte público. En la simulaci\'on el conjunto $R$ de la secci\'on \ref{medio_ambiente}  utilizado fue $\{P1,P2,...,P16,PC\}$ conocidas por todos los cubanos como los \textit{pe}, las cuales son las rutas prinicipales del transporte en La Habana, luego las componentes modeladas son las definidas por dichas rutas.
+Se presentan los resultados de una serie de simulaciones realizadas para analizar el comportamiento de diferentes parámetros y su impacto en el rendimiento del sistema de transporte público en La Habana. Se simularon diferentes escenarios para evaluar el impacto de la capacidad del autobús, el número de agentes y la existencia de rutas en la eficiencia del transporte público. En la simulaci\'on el conjunto $R$ de la secci\'on \ref{medio_ambiente}  utilizado fue $\{P1,P2,...,P16,PC\}$ conocidas por todos los cubanos como los \textit{pe}, las cuales son las rutas prinicipales del transporte en La Habana, luego las componentes modeladas (paradas, conexiones entre paradas, etc.) son las definidas por dichas rutas. Con respecto a la distribuci\'on de datos utilizada se apoya en la Tabla: \textit{Poblaci\'on de Cuba por provincias y municipios} para la proporci\'on de los capitalinos por sus respectivos municipios \cite{onei2022}, y en la Tabla: \textit{La Habana: Distribuci\'on de los ocupados seg\'un municipios de residencia y municipios donde radican las entidades \%} para determinar qu\'e porcentaje de personas de un municipio $M_i$ trabajan en un municipio $M_j$ \cite{aja2023}.  Adem\'as se tuvo en cuenta los horarios \textit{pico}, en que las personas salen a su lugar de trabajo y regresan de este, los cuales se consider\'o que son de 6:00am a 8:00am y de 3:00pm a 5:00pm. Con respecto a las paradas y rutas se utiliz\'o la base de datos de  la app MWurbanos \cite{apklis}. Todas las gr\'aficas y tablas plasmadas en este documento se puden consultar en una mayor escala \href{https://github.com/YoanRene/AI-Sim/tree/master/docs/imgs}{aqu\'i}. 
 
 \subsection{Parámetros de la Simulación}
 
 Los siguientes parámetros se utilizaron en las simulaciones:
 
 \begin{itemize}
-\item Número de agentes: Determina la cantidad de personas que requieren transporte.
-\item Capacidad del autobús: Define la cantidad máxima de pasajeros que puede transportar un autobús.
-\item Ruta inexistente: Eliminamos una ruta que existe en la realidad para evaluar el impacto en la distribución de pasajeros.
+\item Número de agentes: Determina la cantidad de personas que requieren transporte. Se prob\'o con 50, 500, 1000 y 5000.
+\item Capacidad del autobús: Define la cantidad máxima de pasajeros que puede transportar un autobús. Se prob\'o con 2, 5,10 y 20.
+\item Ruta inexistente: Eliminamos una ruta que existe en la realidad para evaluar el impacto en la distribución de pasajeros. Se prob\'o con la ausencia de todos los \textit{pe}.
 \end{itemize}
 
 \subsection{Resumen de las Métricas Clave}
 
-Se evaluaron las siguientes métricas clave en cada simulación:
+Se evaluaron las siguientes métricas en cada simulación de un total de 69:
 
 \begin{itemize}
 \item Viajes completados: La mayoría de las simulaciones lograron un alto porcentaje de viajes completados por agentes, con un promedio general de 93.4\%.
 \item Destinos completados: Se observa una alta correlación entre viajes completados y destinos completados por agentes donde este \'utimo representa tanto la ida al trabajo como el regreso, con un promedio de 93.3\%.
-\item Regresaron a la casa sin llegar al trabajo: La mayoría de las simulaciones tuvieron un bajo porcentaje de agentes que regresaron a casa sin llegar al trabajo, con un promedio general de 0.1\%.
-\item Tiempo promedio de viaje al trabajo del agente: El tiempo promedio de viaje varía significativamente entre las diferentes configuraciones de la simulación, con un promedio general de 139.5 minutos.
-\item Llenado de las rutas: El llenado de las rutas varía según la ruta y la configuración, con un promedio general de 1.5\% (nada m\'as lejos de la realidad cubana).
+\item Tiempo promedio de viaje al trabajo del agente: El tiempo promedio de viaje varía significativamente entre las diferentes configuraciones de la simulación, con un promedio general de 139.5 minutos, lo que equivale a 2 horas y 19 minutos aproximadamente, bastante cerca de la realidad cubana.
+\item Porcentaje de Llenado: Este valor representa la cantidad de personas que una guagua lleva en promedio por cada parada, este fue de 19.5\%, lo cual es bastante bajo para la situaci\'on actual en la capital, en parte se debe a los horarios  nocturnos; no obstante hay espacio de mejora en la simulaci\'on para un valor m\'as real de esta m\'etrica.
 \end{itemize}
 
 \subsection{Resultados}
-
-\subsubsection{Distribución de Pasajeros}
-
-Se observa que las rutas con mayor cantidad de pasajeros transportados son las rutas P1, P2, P10 y P11. Esto se debe a la alta demanda en estas zonas, la distribución de las paradas y la frecuencia de los servicios. Las rutas P2, P3, P4, P5, P6, P7, P8, P9, y PC registran una menor cantidad de pasajeros, lo que indica una menor demanda o un menor uso del transporte público en estas zonas.
-
-\subsubsection{Porcentaje de Llenado}
-
-El porcentaje de llenado de los autobuses refleja una alta utilización del servicio en las rutas más demandadas. La ruta P1 tiene un llenado promedio por encima del resto significativamente, lo que sugiere que esta es la ruta que pasa por los sitios con mayor acumulación de personas. El resto de las rutas mantiene un porcentaje de llenado bastante similar, lo que parece indicar que están más balanceadas las paradas entre paradas en las que se acumulan varias personas y paradas relativamente vacías.
-
-\subsubsection{Tiempo Promedio de Viaje}
-
-El tiempo promedio de viaje se ve afectado por varios factores, como la distancia de la ruta, la frecuencia de los servicios, la cantidad de pasajeros, y la capacidad del autobús. Se observa que las rutas P1, P2, P3, P4, P5, P6, P7, P8, P9 y PC tienen tiempos de viaje promedio de 120 a 160 minutos. El tiempo promedio de viaje está correlacionado con la cantidad de agentes y la capacidad del autobús.
-
-\subsubsection{Distribución de Viajes Completados}
-
-\begin{itemize}
-\item Rutas más eficaces: Se pueden identificar las rutas más eficaces al analizar el número de pasajeros transportados, el porcentaje de llenado y el tiempo promedio de viaje. La ruta P10 parece ser una de las más eficaces en términos de tiempo promedio de viaje.
-\item Impacto de la capacidad del autobús: Un aumento en la capacidad del autobús tiene un impacto positivo en el tiempo promedio de viaje.
-\item Impacto del número de agentes: Un mayor número de agentes no siempre implica un tiempo promedio de viaje más corto. Se debe analizar la distribución de los agentes en las diferentes rutas para optimizar la eficiencia.
-\end{itemize}
+El objetivo fundamental de este proyecto siempre fue determinar para una hora espec\'ifica la cantidad de personas que hay en un municipio, esto se logra tal como se muestra en el ejemplo de la Figura \ref{fig:1} para una simulaci\'on dada (aclarar que no se observan todos los municipios por un tema de extensi\'on de la tabla).
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{imgs/pasajeros_ruta.png}
-    \caption{Pasajeros Transportados por Ruta}
+    \includegraphics[width=0.8\textwidth]{imgs/s1000.png}
+    \caption{Cantidad de agentes en un horario(minutos a partir de las 6:00am) en un municipio dado}
+    \label{fig:1}
+\end{figure}
+
+Por la cantidad significativa de valores expresados se determinaron dos formas distintas de expresar el objetivo central del proyecto sin que duela la vista de tantos n\'umeros, aunque quiz\'as esforzando un poco m\'as la vista por el tamaño de las gráficas, no obstanste se reitera revisar con más detalle \href{https://github.com/YoanRene/AI-Sim/tree/master/docs/imgs}{aqu\'i}, una de estas dos formas de expresar lo mismo se encuentra en la Figura \ref{fig:2}, en la que se pude notar dos curvas que sobresalen del resto en horario laboral, las cuales representan al municipio Playa y Plaza de la Revoluci\'on, esto se debe principalmente a la gran cantidad de empleos que existen en estas localidades.
+
+\begin{figure}[H]
+    \hspace{-3cm}
+    \includegraphics[width=1.4\textwidth]{imgs/s1000c20.png}
+    \caption{Cantidad de agentes vs Tiempo Minutos (Simulaci\'on 1000 agentes con capacidad de las guaguas de 20, y sin la ausencia de rutas)}
+    \label{fig:2}
+\end{figure}
+
+La otra forma en que expresamos lo mismo es a través de un mapa de calor de La Habana, lo cual entre más intenso el color de un municpio en una hora determinada más cantidad de agentes hay en este, para representar esto se hizo una pequeña interfaz visual en la que dada una simulación se es capaz de escoger la hora, y observar el mapa de calor correspondiente tal como se aprecia en la Figura \ref{fig:3}, como dato interesante en el desarrollo de la interfaz se utilizó una archivo \textit{geojson} desarrollado por un importante miembro de la facultad de MATCOM de la UH; para los curiosos puden consultar \href{https://github.com/yudivian/cuba-geojsons}{aqu\'i} .
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{imgs/mc.png}
+    \caption{Mapa de Calor con el filtro de Rutas visible}
     \label{fig:3}
+\end{figure}
+
+An\'alogamente a lo visto en la Figura \ref{fig:2} se presentan dos muestras curiosas de la simulaci\'on, la Figura \ref{fig:4} y la Figura \ref{fig:5}, en la primera se observa una tendencia de los agentes de ir al municipio Plaza de la Revoluci\'on y no regresar, el hecho aqu\'i es que la cantidad de agentes al superar en gran medida a la cantidad de guaguas, estas no puden brindar un buen servicio, por lo que muchos de los agentes en su af\'an de cumplir sus deseos deciden llegar al destino, en su mayor\'ia inclinados m\'as por ir caminando que en carro, por lo cual muchos llegan a sus respectivos empleos bastante tarde, el problema es que al regresar, como simulamos un solo d\'ia ellos llegar\'ian a su casa en su mayor\'ia al d\'ia siguiente, lo cual no se ve reflejado en la gr\'afica. Con respecto a la otra figura notar que pese a la ausencia del P1 como ruta, se mantiene bastante igual el comportamiento a la FIgura \ref{fig:2}, esto se debe al comportamiento del agente de poder encontrar una ruta alternativa a su destino.
+
+\begin{figure}[H]
+    \hspace{-3cm}
+    \includegraphics[width=1.4\textwidth]{imgs/s500c2.png}
+    \caption{Cantidad de agentes vs Tiempo Minutos (Simulaci\'on 5000 agentes con capacidad de las guaguas de 2, y sin la ausencia de rutas)}
+    \label{fig:4}
+\end{figure}
+\begin{figure}[H]
+    \hspace{-3cm}
+    \includegraphics[width=1.4\textwidth]{imgs/s1000c20p1.png}
+    \caption{Cantidad de agentes vs Tiempo Minutos (Simulaci\'on 1000 agentes con capacidad de la guagua de 20, y con la ausencia de la ruta P1)}
+    \label{fig:5}
+\end{figure}
+
+Analizando la muestra de la Figura \ref{fig:5} surge una pregunta: ¿Qué tanto influye entonces una ruta en el desplazamiento de los agentes? Como respuesta veamos lo que sucede en la Figura \ref{fig:6}, en esta se aprecia un alto \'indice de agentes transportados en las rutas que transitan Plaza de la Revoluci\'on y Playa tales como el P9,P1,P2 y PC muy fuertemente ligado a las cuestiones ya mencionadas de tener alta tasa de trabajos. Tal como se observa el n\'umero de personas que usan el transporte p\'ublico es bastante alto, lo cual se considera un se logr\'o pues se acerca m\'as a realidad, teniendo en cuenta que no se us\'o una frecuencia de salida de guaguas muy cerca en el tiempo (60 minutos).
+
+\begin{figure}[H]
+     \hspace{-2cm}
+    \includegraphics[width=1.3\textwidth]{imgs/pptr.png}
+    \caption{Promedio de Personas Transportadas por Ruta}
+    \label{fig:6}
 \end{figure}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{imgs/tiempo_agentes.png}
-    \caption{Tiempo Promedio de Viaje(minutos) vs N\'umero de Agentes}
-    \label{fig:3}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{imgs/tiempo_capacidad.png}
+    \includegraphics[width=1\textwidth]{imgs/tiempo_capacidad.png}
     \caption{Tiempo Promedio de Viaje(minutos) vs Capacidad del \'omnibus}
-    \label{fig:3}
+    \label{fig:7}
 \end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{imgs/tiempo_ruta.png}
-    \caption{Tiempo Promedio de Viaje(minutos) por Ruta}
-    \label{fig:3}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{imgs/llenado_ruta.png}
-    \caption{Porcentaje de Llenado por Ruta}
-    \label{fig:3}
-\end{figure}
+\newpage
+A continuaci\'on vemos en la Figura \ref{fig:7} una correlaci\'on entre el tiempo promedio de viaje y la capacidad de la guaga, indicando que entre m\'as haya capacidad m\'as r\'apido llegan las personas a sus respectivos destinos, aunque notar cierta peculiaridad en que la media de muestras en 20 est\'a ligeramente por encima de la media de las muestras de 10, queda pendiente analizar esto al detalle, puesto que carece un tanto de sentido con la visi\'on puesta en lo real. 
 
 
 \section{Conclusiones}
-
-La simulación de transporte público en La Habana ha revelado información valiosa sobre el comportamiento del sistema bajo diferentes condiciones. Se ha observado que la demanda de transporte público varía según la zona y la ruta. El tiempo promedio de viaje está correlacionado con la cantidad de agentes y la capacidad del autobús. La capacidad de los autobuses tiene un impacto directo en la cantidad de pasajeros que pueden transportar. Los resultados sugieren que la optimización de las rutas, la frecuencia de los servicios y la capacidad de los autobuses son factores clave para mejorar el rendimiento del sistema de transporte público.
+Se cumpli\'o el objetivo trazado de poder representar con un enfoque en el transporte p\'ublico la cantidad de personas por municipio en La Habana a lo largo de un d\'ia. Las simulaciones han revelado información interesante sobre el comportamiento del sistema bajo diferentes condiciones. Se ha observado que la demanda de transporte público varía según la zona y la ruta. El tiempo promedio de viaje está correlacionado con la cantidad de agentes y la capacidad del autobús. La capacidad de los autobuses tiene un impacto directo en la cantidad de pasajeros que pueden transportar. Los resultados sugieren que la optimización de estos factores es clave para mejorar el rendimiento del sistema de transporte público. 
 
 \subsection{Recomendaciones}
 
 \begin{itemize}
 \item Optimizar las rutas para minimizar el tiempo promedio de viaje y la cantidad de pasajeros que utilizan las rutas con menor demanda.
-\item Disminuir el tiempo de salida de guaguas en la ruta P1 ya que según nuestros datos observamos que esta es la ruta que transporta a una cantidad mayor de personas, lo cual reduciría los tiempos de viajes y una mayor cantidad de personas podrían llegar a su objetivo más rápidamente y mejorar la satisfacción del usuario.
-\item Ajustar la capacidad de los autobuses en función de la demanda de cada ruta para asegurar un uso eficiente de los recursos. Es decir, utilizar autobuses de menor capacidad en las rutas con menos densidad poblacional.
+\item Disminuir el tiempo de salida de guaguas en la rutas P1,P2,P9 y PC ya que según nuestros datos observamos que  se transporta a una cantidad mayor de personas, lo cual reduciría los tiempos de viajes y una mayor cantidad de personas podrían llegar a su objetivo más rápidamente y mejorar la satisfacción de los pasajeros.
 \end{itemize}
 
 \subsection{Próximos Pasos}
@@ -325,13 +329,16 @@ La simulación podría mejorarse al incluir elementos como:
 
 \begin{itemize}
 \item Simulación con los datos reales de población y capacidad de guaguas, así como todas las rutas de estas para un mayor entendimiento del comportamiento de la población de la ciudad de La Habana durante el día.
+\item Observaci\'on de las simulaciones mediante la interfaz del mapa implementado vi\'endose las guaguas recorriendo el mapa.
+\item Simulaci\'on de las rutas alimentadoras y complementarias como los son la 179,69,A27 entre otras, as\'i como el servicio de Metrotaxi.
+\item Con el tema de distancia si se tiene en cuenta donde la guagua dobla se simula mejor los tiempos de llegada de esta a una parada.
 \end{itemize}
 
 La implementación de estos elementos permitirá obtener resultados más precisos y útiles para la toma de decisiones en el sistema de transporte público de La Habana.
 
 
 % Sección de Bibliografía
-\bibliographystyle{plainnat} % o el estilo que prefieras
+\bibliographystyle{unsrtnat} % o el estilo que prefieras
 \bibliography{bibliography} % Asegúrate de que el archivo .bib está en el mismo directorio
 
 
