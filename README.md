@@ -19,7 +19,7 @@ Estimar la distribución poblacional en los diferentes municipios de La Habana d
   ```
 3. Ejecuta el script:
   ```
-  python src/simulation.py
+  python src/main.py
   ```
 ## 📚 Documentación
 Para obtener más detalles sobre el proyecto y su implementación, consulta la documentación completa en [report](https://github.com/YoanRene/AI-Sim/tree/master/docs/report.pdf).
