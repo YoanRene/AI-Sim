@@ -8,7 +8,7 @@ geojson_path = "data/lha.geojson"  # Asegúrate de tener el archivo GeoJSON
 gdf = gpd.read_file(geojson_path)
 
 # Cargar los datos del CSV
-df_csv = pd.read_csv("output.csv")
+df_csv = pd.read_csv("out/output.csv")
 
 # Renombrar los municipios para que coincidan con los del GeoJSON
 df_csv = df_csv.rename(columns={
