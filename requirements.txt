@@ -4,3 +4,4 @@ geopandas
 google-generativeai
 folium
 numpy
+markdown
