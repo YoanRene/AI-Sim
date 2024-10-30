@@ -267,98 +267,98 @@ class self:
     
     def actualizar_intenciones(self, grafo, current_time):
         """
-        Actualiza las intenciones del  basándose en sus creencias, preferencias y el contexto.
-
-        Args:
-            self: El self cuya intención se va a actualizar.
-            grafo: El grafo del sistema de transporte.
-            informacion_guaguas: Información sobre las guaguas disponibles.
-            current_time: Tiempo actual en minutos desde el inicio de la simulación.
-
-        Returns:
-            Una lista actualizada de intenciones.
+        Actualiza las intenciones del agente usando una lista de funciones de transición.
         """
+        transiciones = [
+            self.transicion_salir_de_casa,
+            self.transicion_llegar_al_trabajo,
+            self.transicion_trabajar,
+            self.transicion_regresar_a_casa,
+            self.transicion_buscar_ruta_rapida,
+            self.transicion_buscar_ruta_comoda,
+            self.transicion_esperar_guagua,
+            self.transicion_buscar_guagua,
+            self.transicion_viajar_en_guagua,
+            self.transicion_descansar,
+        ]
 
-        # 1. Evaluar el estado actual
-        estado_actual = self.creencias['parada_actual'].id
-        destino = self.creencias['destino'].id
+        last_intenciones = None
+        while last_intenciones != self.intenciones:
+            last_intenciones = self.intenciones[:]  # Crea una copia para la comparación
+            for transicion in transiciones:
+                transicion(grafo, current_time)
 
-        # 2. Considerar factores de tiempo y preferencias
-        hora = current_time // 60  # Convertir minutos a horas
-        last = self.intenciones
-        while True:
-            # 3. Reglas para la actualización de intenciones
-            if self.intenciones == ['salir de casa']:
-                # Si es temprano, espera en casa
-                if hora < 8:
-                    self.intenciones = ['llegar al trabajo']
-                else:
-                    self.intenciones = ['esperar en casa'] # por defecto
-
-            elif self.intenciones == ['llegar al trabajo']:
-                if self.en_destino():
-                    self.creencias['llego_trabajo'] = True
-                    self.intenciones = ['trabajar'] # Trabajar
-                elif self.in_guagua:
-                    self.intenciones = ['esperar_guagua']
-                else:
-                    if self.preferencias['rapidez'] > self.preferencias['comodidad']:
-                        self.intenciones = ['buscar ruta mas rapida']
-                    else:
-                        self.intenciones = ['buscar ruta mas comoda']
-
-            elif self.intenciones == ['trabajar']:
-                if current_time > self.tiempo_regreso > 0:
-                    self.intenciones = ['regresar a casa']
-                else:
-                    self.intenciones = ['trabajar']
-
-            elif self.intenciones == ['regresar a casa']:
-                if self.regreso_a_casa():
-                    self.intenciones = ['descansar']
-                elif self.in_guagua:
-                    self.intenciones = ['esperar_guagua']
-                else:
-                    self.intenciones = ['buscar ruta mas rapida']
-                    #Se añade la posibilidad de coger un carro dependiendo de la preferencia del self
-                    if self.preferencias['comodidad'] > 0.7:
-                        self.intenciones.append('coger carro')
-
-            elif self.intenciones == ['buscar ruta mas rapida']:
-                self.elegir_ruta(grafo)
-                self.intenciones = ['esperar_guagua']
-
-            elif self.intenciones == ['buscar ruta mas comoda']:
-                self.elegir_ruta(grafo)
-                self.intenciones = ['esperar_guagua']
-            elif self.intenciones == ['esperar_guagua']:
-                if not self.in_guagua:
-                    self.intenciones = ['buscar_guagua']  # Buscar la guagua
-                else:
-                    self.intenciones = ['viajar en guagua']
-            elif self.intenciones == ['buscar_guagua']:
-                # Logica para buscar la proxima guagua
-                self.intenciones = ['esperar_guagua']
-
-            elif self.intenciones == ['viajar en guagua']:
-                if not self.in_guagua:
-                    self.intenciones = ['buscar_guagua']
-                elif self.en_destino():
-                    if self.creencias['llego_trabajo']:
-                        self.intenciones = ['trabajar']
-                    else:
-                        self.intenciones = ['descansar']
-                else:
-                    self.intenciones = ['viajar en guagua']
-
-            elif self.intenciones == ['descansar']:
-                self.intenciones = []  # Sin más intenciones
-
-            if last == self.intenciones:
-                break
+    def transicion_salir_de_casa(self,grafo, current_time):
+        if self.intenciones == ['salir de casa']:
+            hora = current_time // 60
+            if hora < 8:
+                self.intenciones = ['llegar al trabajo']
             else:
-                last = self.intenciones
-        return self.intenciones
+                self.intenciones = ['llegar al trabajo']
+
+    def transicion_llegar_al_trabajo(self,grafo, current_time):
+        if self.intenciones == ['llegar al trabajo']:
+            if self.en_destino():
+                self.creencias['llego_trabajo'] = True
+                self.intenciones = ['trabajar']
+            elif self.in_guagua:
+                self.intenciones = ['esperar_guagua']
+            else:
+                if self.preferencias['rapidez'] > self.preferencias['comodidad']:
+                    self.intenciones = ['buscar ruta mas rapida']
+                else:
+                    self.intenciones = ['buscar ruta mas comoda']
+
+    def transicion_trabajar(self,grafo, current_time):
+        if self.intenciones == ['trabajar']:
+            if current_time > self.tiempo_regreso > 0:
+                self.intenciones = ['regresar a casa']
+
+    def transicion_regresar_a_casa(self,grafo, current_time):
+        if self.intenciones == ['regresar a casa']:
+            if self.regreso_a_casa():
+                self.intenciones = ['descansar']
+            elif self.in_guagua:
+                self.intenciones = ['esperar_guagua']
+            else:
+                self.intenciones = ['buscar ruta mas rapida']
+                if self.preferencias['comodidad'] > 0.7:
+                    self.intenciones.append('coger carro')
+
+    def transicion_buscar_ruta_rapida(self,grafo, current_time):
+        if self.intenciones == ['buscar ruta mas rapida']:
+            self.elegir_ruta(grafo)
+            self.intenciones = ['esperar_guagua']
+
+    def transicion_buscar_ruta_comoda(self,grafo, current_time):
+        if self.intenciones == ['buscar ruta mas comoda']:
+            self.elegir_ruta(grafo)
+            self.intenciones = ['esperar_guagua']
+
+    def transicion_esperar_guagua(self,grafo, current_time):
+        if self.intenciones == ['esperar_guagua']:
+            if not self.in_guagua:
+                self.intenciones = ['buscar_guagua']
+            else:
+                self.intenciones = ['viajar en guagua']
+
+    def transicion_buscar_guagua(self,grafo, current_time):
+        if self.intenciones == ['buscar_guagua']:
+            self.intenciones = ['esperar_guagua']
+
+    def transicion_viajar_en_guagua(self,grafo, current_time):
+        if self.intenciones == ['viajar en guagua']:
+            if not self.in_guagua:
+                self.intenciones = ['buscar_guagua']
+            elif self.en_destino():
+                if self.creencias['llego_trabajo']:
+                    self.intenciones = ['trabajar']
+                else:
+                    self.intenciones = ['descansar']
+
+    def transicion_descansar(self,grafo, current_time):
+        if self.intenciones == ['descansar']:
+            self.intenciones = []
 
 
 
